@@ -1,7 +1,7 @@
 # Sources log
 
 Every query run and every source tried, read or blocked (plan Appendix G). Times IST, 2026-10-06, approximate to within 5 minutes.
-Raw downloads (which contain reviewer names) are kept outside the repo in `D:ISBRazorpayesearch-raw` and are not committed. Only coded rows with names removed enter `coded.csv`.
+Raw downloads (which contain reviewer names) are kept outside the repo in `D:\ISB\Razorpay\research-raw\` and are not committed. Only coded rows with names removed enter `coded.csv`.
 
 | When | Query or URL | Result | Rows coded |
 | --- | --- | --- | --- |
