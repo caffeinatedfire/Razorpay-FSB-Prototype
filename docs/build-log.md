@@ -41,3 +41,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 30
 - AI was wrong about: (1) S5 first showed "Recovered this week: ₹22,000 via link ₹17,000" next to an ₹18,000 link payment, which cannot add up; fixed to ₹40,000 (₹35,000 + ₹5,000), with Home's ₹22,000 as the figure before that payment; (2) the S2 length counter was a guess (134); measured as 146; (3) two decision rows cited evidence that did not support them (E-031/E-032 for "ledger apps do invoicing"; E-080 for owner behaviour); reworded.
 - Commit: see `git log`
+
+### 2026-10-06T14:45+05:30 | housekeeping | separate from the MyProd project
+- Did: confirmed this repo is its own git repository (own .git, no remote, no alternates, no MyProd references in any file). Moved the raw research downloads from the session scratch folder (named after the MyProd folder the session was started in) to D:\ISB\Razorpay\research-raw\, outside the repo.
+- Why: the human asked for no link to MyProd.
+- Checks: npm run guard -> ok
+- Minutes: 5
+- AI was wrong about: I started work from a Claude Code session opened in the MyProd folder, so the session's own files and scratch space sat under MyProd's name, and P0's first commit read the author name from MyProd's git config (it resolved to the global identity).
+- Commit: see `git log`
