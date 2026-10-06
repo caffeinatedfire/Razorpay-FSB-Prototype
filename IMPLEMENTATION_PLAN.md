@@ -195,7 +195,7 @@ Gate out: P1-A01 to P1-A05 pass, then gate G1. Next phase waits for the human's 
 
 ## Phase P2: Design and storyboard
 
-Status: waiting at G2
+Status: done (G2 approved with changes: keep Hindi and Hinglish, keep D-01)
 Target: Wed 7 Oct, 9:00 AM IST (2026-10-07T09:00+05:30), ready for review
 Agent hours: 3
 Gate in: G1 approved
@@ -227,7 +227,7 @@ Gate out: P2-A01 to P2-A05 pass, then gate G2.
 
 ## Phase P3: Happy-path build
 
-Status: not started
+Status: in progress
 Target: Wed 7 Oct, 8:00 PM IST (2026-10-07T20:00+05:30)
 Agent hours: 6
 Gate in: G2 approved

@@ -39,6 +39,12 @@ D-16 | 2026-10-06T14:05+05:30 | Collect is provisionally locked. The note states
 
 D-17 | 2026-10-06T14:05+05:30 | Use the human's chat notes only as pointers: re-read each cited source and code 5 of them as context rows (E-085 to E-089, origin human_inbox). Add no first-hand rows from them | coding the notes' own claims as evidence | The notes say no forum data was collected; several claims in them are tagged Likely | agent
 
+D-18 | 2026-10-06T14:20+05:30 | Hindi and Hinglish stay in the product (English in P3; Hindi and Hinglish in P4-T05), confirming D-10. The storyboard's Hindi and Hinglish caption variants stay cut | drop both languages | Per the human's G2 reply "keep Hindi and Hinglish" | human
+
+D-19 | 2026-10-06T14:20+05:30 | D-01 stays as written | rewording D-01's reason | Per the human's G2 reply "keep D-01" | human
+
+D-20 | 2026-10-06T14:20+05:30 | G2 items the reply did not name are read as approved as proposed in the pack, or left as they are: all six screens kept; the north star stays "overdue value recovered within 14 days of the first Collect reminder", baseline `assumed` 35%; the title card shows "37 public reviews coded", not H1; the Play-review rows stay in (D-13 unchanged); the chat-notes file stays untracked, neither committed nor git-ignored; no extra forum search | asking again before P3 | The reply was "approved", which covers the pack's proposals. Where the pack asked for an explicit word (notes file, Play rows, forum search), nothing changes and nothing irreversible is done. The human can override any of these at G3 | agent
+
 ## Human answers before P0 (verbatim)
 
 PRE-P0 | 2026-10-06T13:16+05:30 | Q: Where should the repo be created? A: "D:\ISB\Razorpay\ (Recommended)"
@@ -52,3 +58,5 @@ PRE-P0 | 2026-10-06T13:16+05:30 | Q: Do the gate windows work? A: "Gate timing i
 GATE G1 | 2026-10-06T13:59+05:30 | approved with changes: lock Collect provisionally
 
 uploaded evidence notes at docs/evidence/inbox/razorpay-track2-chat-notes
+
+GATE G2 | 2026-10-06T14:18+05:30 | approved with changes: keep Hindi and Hinglish, keep D-01

@@ -49,3 +49,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 5
 - AI was wrong about: I started work from a Claude Code session opened in the MyProd folder, so the session's own files and scratch space sat under MyProd's name, and P0's first commit read the author name from MyProd's git config (it resolved to the global identity).
 - Commit: see `git log`
+
+### 2026-10-06T14:22+05:30 | G2 changes | reply logged, timestamps corrected
+- Did: copied the G2 reply word for word into the decision log; added D-18 (Hindi and Hinglish kept), D-19 (D-01 kept) and D-20 (how the unnamed G2 items were read); set P2 to done and P3 to in progress. Corrected G2.md's "Written" time.
+- Why: gate protocol step 6; G2 reply "approved with changes: keep Hindi and Hinglish, keep D-01".
+- Checks: P2-A01 to P2-A05 unaffected (no design file changed); npm run check -> see the P3 entries
+- Minutes: 4
+- AI was wrong about: timestamps. The P2 entry above says 14:35 and the housekeeping entry 14:45, and G2.md said "Written: 14:35", but git shows the P2 commit at 14:07:16 and the housekeeping commits at 14:13 and 14:14, and the clock read 14:18 when the G2 reply arrived. Those times were estimated, not read from the clock. True times: P2 commit 14:07, housekeeping 14:13 to 14:14. From now on every entry time is read from the system clock (`date`). The "Minutes" figures in earlier entries are estimates too.
+- Commit: see `git log`
