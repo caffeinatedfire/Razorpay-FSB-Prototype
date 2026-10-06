@@ -30,7 +30,7 @@ test('happy path: Home -> Chase -> simulated send -> Sent, in 8 taps or fewer', 
   await page.screenshot({ path: `${SHOTS}/s1-home.png` });
 
   // Timed run: Start, then the designed path.
-  await page.getByLabel(/Who is running it/).fill('e2e');
+  await page.getByLabel(/Label for this run/).fill('e2e');
   await page.getByRole('button', { name: 'Start' }).click();
   await expect(page.getByText('Timed run in progress.')).toBeVisible();
 

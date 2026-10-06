@@ -81,3 +81,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: about 4
 - AI was wrong about: nothing failed here on the first run. I ran the LAN check on port 5174 because the browser pane's dev server held 5173, and stopped it afterwards.
 - Commit: see `git log` (P3: happy-path build)
+
+### 2026-10-07T01:57+05:30 | P3 fix (during G3) | run label no longer asks for a name
+- Did: the Timed run label on Home now reads "Label for this run (for example tester-1; not a name)"; README and the e2e selector updated.
+- Why: CLAUDE.md "No handles, usernames or real names anywhere", and the label is written into `timings.csv`, which goes into the repo (G3 step 1).
+- Checks: npm run check -> see commit; npm run e2e -> see commit
+- Minutes: 3
+- AI was wrong about: I wrote the first hint as "first name or a label", which invites testers' real names into a committed file.
+- Commit: see `git log`

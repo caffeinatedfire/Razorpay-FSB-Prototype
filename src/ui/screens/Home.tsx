@@ -52,7 +52,7 @@ export function Home() {
                 </p>
               ) : (
                 <>
-                  <label htmlFor="runner">Who is running it? (first name or a label)</label>
+                  <label htmlFor="runner">Label for this run (for example tester-1; not a name)</label>
                   <div className="row">
                     <input id="runner" value={runner} onChange={(e) => setRunner(e.target.value)} autoComplete="off" />
                     <button type="button" className="btn" onClick={start}>

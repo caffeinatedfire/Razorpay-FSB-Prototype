@@ -18,7 +18,7 @@ Then open http://localhost:5173/ . Add `?demo=1` to reset the demo data.
 1. Connect the computer and the phone to the same Wi-Fi.
 2. On the computer, in this folder, run `npm run lan`.
 3. It prints a line such as `http://192.168.1.23:5173/`. Type that address into the phone's browser.
-4. To time yourself: on the phone, open Settings, turn on **Timed run**, go back to Home, type a label, tap **Start**, and chase the top card through to the Sent screen. The Sent screen shows the time and the tap count (practice data).
+4. To time yourself: on the phone, open Settings, turn on **Timed run**, go back to Home, type a label such as `tester-1` (not a name: it goes into `timings.csv`), tap **Start**, and chase the top card through to the Sent screen. The Sent screen shows the time and the tap count (practice data).
 5. To export the times: open the same address with `?debug=1` at the end (for example `http://192.168.1.23:5173/?debug=1`) and tap **Export timings.csv** on Home. Save the file as `docs/evidence/timings.csv`.
 
 Each timed run chases a card, so the next runner sees a different top card. To give every runner the same start, tap **Reset demo data** in Settings between runs (Timed run stays on).
