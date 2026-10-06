@@ -57,3 +57,27 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 4
 - AI was wrong about: timestamps. The P2 entry above says 14:35 and the housekeeping entry 14:45, and G2.md said "Written: 14:35", but git shows the P2 commit at 14:07:16 and the housekeeping commits at 14:13 and 14:14, and the clock read 14:18 when the G2 reply arrived. Those times were estimated, not read from the clock. True times: P2 commit 14:07, housekeeping 14:13 to 14:14. From now on every entry time is read from the system clock (`date`). The "Minutes" figures in earlier entries are estimates too.
 - Commit: see `git log`
+
+### 2026-10-06T14:29+05:30 | P3-T01 to P3-T06 | domain, clock, fixtures, rules, ranking, templates, store
+- Did: types copied verbatim from Appendix C; `src/clock.ts` (System, Fixed and Demo clocks, IST helpers), `formatINR`; seeded fixture generator (30 links, 14 customers, SHA-256 identical across runs); rules R02, R04 to R10, R12, R13, R17, R18 as pure functions; ranking with plain reasons; the action table with Home grouping; English, Hindi and Hinglish template data with renderer and R09/R10/R12 validator; reducer with `collect.v1` persistence and `resetDemoData()`.
+- Why: P3-T01 to P3-T06 (P3-A01, P3-A02).
+- Checks: npm run check -> pass (64 tests, 3 files); fixtures:verify -> identical (94392ea4...); test:rules -> 28 passed, 13 rule IDs
+- Minutes: about 9 (P3 ran 14:20 to 14:40 by the clock in total; the per-entry split is an estimate)
+- AI was wrong about: (1) my first action table followed the rows literally, so a disputed customer's paid link would have stayed in "Needs you"; settled links are now excluded first (D-21a). (2) My first "promise has passed" reason compared against now minus 24 hours rather than the IST day after the promise; replaced with the same day boundary R08 uses. (3) The first generator could place a touched link's earlier reminders before its due date; touched links now get a minimum number of overdue days.
+- Commit: see `git log` (P3: happy-path build)
+
+### 2026-10-06T14:33+05:30 | P3-T07, P3-T08 | screens S1 to S3, send sheet, Activity, Settings stub, instrumentation
+- Did: Home, Chase, Sent, the SIMULATED send sheet, a minimal Activity timeline, a Settings stub (Timed run, Reset demo data), hash routing, `?now=`, `?demo=1`, `?debug=1`, `?timed=1`; events in `collect.events`; Timed run with tap counting and `timings.csv` export; dev-only hand-off to the owner's own number (R15) with tests.
+- Why: P3-T07, P3-T08 (and G3 steps 1 and 2).
+- Checks: npm run check -> pass (66 tests, 4 files); clicked through Home, Chase, Hindi switch, sheet and Sent in the browser pane at 390 x 844; no console errors
+- Minutes: about 7
+- AI was wrong about: (1) the Sent-screen evidence screenshot showed "Run time: 2 s", which is the test script's speed; the plan forbids presenting a scripted speed, so the e2e now masks that readout. (2) The production build still carried the dev-only button's label (no URL, no number, never rendered); the button is now gated on the dev flag and a build scan finds no hand-off code. (3) My first empty-state total used a type cast to dodge a missing link; rewritten.
+- Commit: see `git log` (P3: happy-path build)
+
+### 2026-10-06T14:38+05:30 | P3-T09 to P3-T11 | e2e, LAN mode, README, gate G3
+- Did: Playwright happy path at 390 x 844 with axe on S1, S2, the sheet and S3 and a no-sideways-scroll check; screenshots in `docs/evidence/p3/`; `npm run lan` and the README sections "Open it on your phone" and the own-number hand-off test; G3 pack.
+- Why: P3-T09 to P3-T11 (P3-A03 to P3-A07).
+- Checks: npm run e2e -> 1 passed, "3 taps from Start to Sent" (simulated run by the script); axe 0 critical or serious; LAN_PORT=5174 npm run lan printed http://10.0.105.105:5174/ and curl of it returned the app HTML; production build scan: no WhatsApp link, no owner number
+- Minutes: about 4
+- AI was wrong about: nothing failed here on the first run. I ran the LAN check on port 5174 because the browser pane's dev server held 5173, and stopped it afterwards.
+- Commit: see `git log` (P3: happy-path build)

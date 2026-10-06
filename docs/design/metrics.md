@@ -34,5 +34,5 @@ Also watched, not a guardrail: how often the owner overrides a soft block (`soft
 - **Starts** when the owner taps **Start** in Timed run mode on Home (`timed_start`).
 - **Ends** when the Sent screen appears (`timed_end`).
 - **Target:** 120 seconds or less on first use, and **8 taps or fewer**.
-- Happy path as designed: Start, Chase (top card), Send on WhatsApp, Confirm (simulated): 4 taps. A language switch adds 1, and an edit adds a few.
+- Happy path as designed: Start, Chase (top card), Send on WhatsApp, Confirm (simulated): 4 taps. A language switch adds 1, and an edit adds a few. The counter counts pointer events after Start (Start itself is the `timed_start` tap), so it reads 3 for this path; the P3 end-to-end test measured 3 (simulated, `tests/e2e/happy-path.spec.ts`).
 - Tap count is the number of pointer events between `timed_start` and `timed_end`. Timings from the human's test runs are practice data from non-merchants and will be labelled so.

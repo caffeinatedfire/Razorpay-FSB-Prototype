@@ -227,7 +227,7 @@ Gate out: P2-A01 to P2-A05 pass, then gate G2.
 
 ## Phase P3: Happy-path build
 
-Status: in progress
+Status: waiting at G3
 Target: Wed 7 Oct, 8:00 PM IST (2026-10-07T20:00+05:30)
 Agent hours: 6
 Gate in: G2 approved
@@ -236,26 +236,26 @@ Gate out: P3-A01 to P3-A07 pass, then gate G3.
 **Goal.** The core job works end to end on fixtures and runs on the human's phone: Home, Chase, Sent, with the simulated send sheet, the ranking and its reasons, and the timing instrumentation.
 
 **Tasks.**
-- [ ] P3-T01 Write `src/domain/types.ts` exactly as in Appendix C. Write `src/clock.ts` (`SystemClock`, `FixedClock`, `DemoClock`) and `src/format.ts` with `formatINR(paise)`, for example 1250000 becomes `₹12,500`.
-- [ ] P3-T02 Write `scripts/gen-fixtures.ts` and generate `fixtures/links.synthetic.json` per Appendix C (seed 7, 30 links, 14 customers). Output must be byte-identical on every run. Add `fixtures:verify`, which prints the SHA-256 of two generations.
-- [ ] P3-T03 Implement `src/rules/` for the rules needed by the happy path: R04, R05, R06, R07, R08, R09, R10, R12, R13, R14. Each is a pure function with a passing and a failing test whose title starts with its ID, for example `R05 does not chase a paid link`.
-- [ ] P3-T04 Implement `src/rank/` (score and plain-English reasons) and `src/decide/` (default action table), both per Appendix D.
-- [ ] P3-T05 Implement `src/templates/` for English, polite and firm, per Appendix F, with a renderer that fills slots and a validator for R09, R10 and R12.
-- [ ] P3-T06 Implement the store: a reducer plus `localStorage` persistence under the key `collect.v1`, a `resetDemoData()` function, and a hosted-safe default of `DemoClock` starting at Tue 6 Oct 2026 11:00 IST. Allow a dev and demo override `?now=<ISO>`.
-- [ ] P3-T07 Build screens S1 (Home), S2 (Chase) and S3 (Sent) per Appendix E, plus the simulated send sheet (labelled SIMULATED, no WhatsApp logo) and a minimal Activity timeline for S5. Bottom navigation: Home, Activity, Settings (Settings is a stub).
-- [ ] P3-T08 Implement instrumentation and Timed run mode (Appendix E): events to `localStorage` key `collect.events`, a Start button on Home when Timed run is on, and a hidden `?debug=1` button that exports `timings.csv`.
-- [ ] P3-T09 Playwright e2e `tests/e2e/happy-path.spec.ts` at 390 by 844: Home shows at least 3 "Chase today" cards; open the first; press Send; confirm in the simulated sheet; reach Sent; the link's `touchCount` is 1. Add an axe check for S1 to S3 and a no-horizontal-scroll assertion. Save screenshots to `docs/evidence/p3/`.
-- [ ] P3-T10 Add `npm run lan`, which runs the Vite dev server with `--host` and prints the local-network URL, and a README section "Open it on your phone" with the steps and a fallback (`docs/deploy.md`, written in P7, covers static hosting).
-- [ ] P3-T11 Prepare the G3 pack and set status to `waiting at G3`.
+- [x] P3-T01 Write `src/domain/types.ts` exactly as in Appendix C. Write `src/clock.ts` (`SystemClock`, `FixedClock`, `DemoClock`) and `src/format.ts` with `formatINR(paise)`, for example 1250000 becomes `₹12,500`.
+- [x] P3-T02 Write `scripts/gen-fixtures.ts` and generate `fixtures/links.synthetic.json` per Appendix C (seed 7, 30 links, 14 customers). Output must be byte-identical on every run. Add `fixtures:verify`, which prints the SHA-256 of two generations.
+- [x] P3-T03 Implement `src/rules/` for the rules needed by the happy path: R04, R05, R06, R07, R08, R09, R10, R12, R13, R14. Each is a pure function with a passing and a failing test whose title starts with its ID, for example `R05 does not chase a paid link`.
+- [x] P3-T04 Implement `src/rank/` (score and plain-English reasons) and `src/decide/` (default action table), both per Appendix D.
+- [x] P3-T05 Implement `src/templates/` for English, polite and firm, per Appendix F, with a renderer that fills slots and a validator for R09, R10 and R12.
+- [x] P3-T06 Implement the store: a reducer plus `localStorage` persistence under the key `collect.v1`, a `resetDemoData()` function, and a hosted-safe default of `DemoClock` starting at Tue 6 Oct 2026 11:00 IST. Allow a dev and demo override `?now=<ISO>`.
+- [x] P3-T07 Build screens S1 (Home), S2 (Chase) and S3 (Sent) per Appendix E, plus the simulated send sheet (labelled SIMULATED, no WhatsApp logo) and a minimal Activity timeline for S5. Bottom navigation: Home, Activity, Settings (Settings is a stub).
+- [x] P3-T08 Implement instrumentation and Timed run mode (Appendix E): events to `localStorage` key `collect.events`, a Start button on Home when Timed run is on, and a hidden `?debug=1` button that exports `timings.csv`.
+- [x] P3-T09 Playwright e2e `tests/e2e/happy-path.spec.ts` at 390 by 844: Home shows at least 3 "Chase today" cards; open the first; press Send; confirm in the simulated sheet; reach Sent; the link's `touchCount` is 1. Add an axe check for S1 to S3 and a no-horizontal-scroll assertion. Save screenshots to `docs/evidence/p3/`.
+- [x] P3-T10 Add `npm run lan`, which runs the Vite dev server with `--host` and prints the local-network URL, and a README section "Open it on your phone" with the steps and a fallback (`docs/deploy.md`, written in P7, covers static hosting).
+- [x] P3-T11 Prepare the G3 pack and set status to `waiting at G3`.
 
 **Acceptance (run these).**
-- [ ] P3-A01 `npm run test:rules` passes for R04 to R10, R12 to R14 as listed in P3-T03.
-- [ ] P3-A02 `npm run fixtures:verify` prints identical hashes.
-- [ ] P3-A03 `npm run e2e` passes the happy path, and instrumentation records 8 taps or fewer from Start to Sent.
-- [ ] P3-A04 The axe check reports 0 critical or serious violations on S1 to S3.
-- [ ] P3-A05 No horizontal scroll at 390 px on S1 to S3.
-- [ ] P3-A06 `npm run check` exits 0.
-- [ ] P3-A07 `npm run lan` prints a local-network URL, and fetching that URL returns the app's HTML. (The human opens it on a phone at G3.)
+- [x] P3-A01 `npm run test:rules` passes for R04 to R10, R12 to R14 as listed in P3-T03.
+- [x] P3-A02 `npm run fixtures:verify` prints identical hashes.
+- [x] P3-A03 `npm run e2e` passes the happy path, and instrumentation records 8 taps or fewer from Start to Sent.
+- [x] P3-A04 The axe check reports 0 critical or serious violations on S1 to S3.
+- [x] P3-A05 No horizontal scroll at 390 px on S1 to S3.
+- [x] P3-A06 `npm run check` exits 0.
+- [x] P3-A07 `npm run lan` prints a local-network URL, and fetching that URL returns the app's HTML. (The human opens it on a phone at G3.)
 
 **If late, cut.** Screens S4 to S6 (they belong to P4 anyway). Settings stays a stub.
 
