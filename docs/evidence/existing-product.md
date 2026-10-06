@@ -16,6 +16,8 @@ All pages read on 2026-10-06 (IST), public pages only. "App" means the Razorpay 
 | S8 | App Store listing (version 3.0.7, "4 days ago") | https://apps.apple.com/in/app/razorpay-accept-payments-now/id1497250144 | 2026-10-06 |
 | S9 | About Disputes (docs) | https://razorpay.com/docs/payments/disputes/ | 2026-10-06 |
 | S10 | Settlements (docs) | https://razorpay.com/docs/payments/settlements/ | 2026-10-06 |
+| S11 | Agent Studio (pointer from the human's notes) | https://razorpay.com/agent-studio/ | 2026-10-06 |
+| S12 | Razorpay blog: payment-link reminders (pointer from the human's notes) | https://razorpay.com/blog/automate-payment-reminders/ | 2026-10-06 |
 
 ## The plan's 3 Oct facts, checked
 
@@ -30,6 +32,8 @@ All pages read on 2026-10-06 (IST), public pages only. "App" means the Razorpay 
 | (not in plan) | **Addition:** the redesigned app (versions 3.0.3 to 3.0.7, Aug to Oct 2026) puts "payments, settlements, QR codes, and payment links all a tap away". The app page says "Create and share payment links instantly"; a testimonial on it mentions cancelling payment links on the phone | S6, S8 |
 | (not in plan) | Store listing: links can be shared "via an email, SMS, WhatsApp, Messenger etc." (sharing a new link, not chasing an overdue one) | S7 |
 
+Added after G1, from the human's notes: Agent Studio (S11) names 29 agents grouped by industry, including Dispute Responder and Chargeback Defence. None of them chases a merchant's unpaid Payment Links or invoices; the nearest are Loan Recovery and EMI Recovery, for lenders. The reminders blog (S12) says the system picks the hour: "The reminders will be sent at a time in the day based on our analysis of the payment patterns".
+
 Not documented anywhere I could read: a list of overdue links ranked by who to chase, a reminder sent through the merchant's own WhatsApp, logging what the customer said (a promised date), or reminders from the app. I could not open the app itself (no account); the human can check this at G1, step 5.
 
 ## Coverage ratings (used in job-score.md)
@@ -37,5 +41,5 @@ Not documented anywhere I could read: a list of overdue links ranked by who to c
 | Job | Rating | Reason |
 | --- | --- | --- |
 | Collect (chasing overdue links) | 1 partly | Automatic SMS/email reminders (max 3, fixed hours) and manual resend exist on the Dashboard; nothing documented for deciding whom to chase, chasing on WhatsApp in the owner's voice, or logging promises, and nothing documented in the app |
-| Dispute (card chargebacks) | 1 partly | Dashboard lets merchants view, accept, contest and submit evidence (S9); the app is not mentioned |
+| Dispute (card chargebacks) | 1 partly | Dashboard lets merchants view, accept, contest and submit evidence (S9); Agent Studio has Dispute Responder and Chargeback Defence agents (S11), so this job is arguably closer to 0; the app is not mentioned |
 | Payout (held or late settlements) | 1 partly | Settlement cycle and Dashboard tracking are documented (S10) and the app shows settlements (S8); why funds are held, and how to get them released, is not covered in the docs read |

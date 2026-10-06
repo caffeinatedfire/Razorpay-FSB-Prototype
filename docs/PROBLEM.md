@@ -1,10 +1,10 @@
 # The problem: chasing overdue Payment Links
 
-Status: **provisional lock, pending G1.** Evidence: 84 coded public items (73 first-hand app reviews, 11 context pages), all in `docs/evidence/coded.csv`. No merchant was interviewed.
+Status: **provisionally locked at G1** (6 Oct); the note says so, with n = 37. Evidence: 89 coded items (73 first-hand reviews, 16 context pages) in `docs/evidence/coded.csv`. No merchant was interviewed.
 
 ## Who (composite, fictional)
 
-The owner of a one-person catering, coaching or design business that bills customers on credit. They send a Razorpay Payment Link after each job and run the business from a phone between jobs. At any time a handful of links are a week or more overdue, and each one is a customer they still want to keep.
+The owner of a one-person catering, coaching or design business that bills on credit. They send a Razorpay Payment Link after each job and run the business from a phone. A handful of links are always a week or more overdue, each from a customer they want to keep.
 
 ## The job
 
@@ -14,7 +14,7 @@ The owner of a one-person catering, coaching or design business that bills custo
 
 - **Razorpay's own reminders** are automatic SMS and email, at most 3 per link, sent only 11 AM to 12 PM and 3 PM to 5 PM, and set up on the Dashboard (E-074; `existing-product.md`). The owner can also resend a link from the Dashboard (E-075). Nothing documented lets the owner do any of this from the app, on WhatsApp, or by choosing whom to chase first.
 - **Credit-ledger apps** (Khatabook, OkCredit, Vyapar) are where owners already chase dues. Reviewers describe sending reminders from the app by SMS or WhatsApp (E-001, E-015, E-025), sometimes one customer at a time (E-010, E-021).
-- **Before any app**, one owner kept a paper register: slow, and entries were missed (E-025).
+- **Before any app**, one owner kept a paper register that was slow and missed entries (E-025).
 
 ## Where it hurts
 
@@ -38,11 +38,11 @@ The owner of a one-person catering, coaching or design business that bills custo
 
 ## Why mobile
 
-The owner is away from a desk when a payment is late. Ledger-app reviewers already chase from the phone (37 of 37 rows). WhatsApp is the channel they ask for (E-001, E-033), and a vendor blog calls it "the normal channel for client follow-ups" in India (E-082, context). Razorpay's own reminder controls are Dashboard-only (E-074).
+The owner is rarely at a desk. Ledger-app reviewers already chase from the phone (37 of 37 rows). WhatsApp is the channel they ask for (E-001, E-033), and a vendor blog calls it "the normal channel for client follow-ups" in India (E-082, context). Razorpay's own reminder controls are Dashboard-only (E-074).
 
 ## What the app already covers
 
-Creating and sharing links, tracking payments and settlements (E-078, E-080). It does not document deciding whom to chase, WhatsApp reminders in the owner's voice, or logging a promise. Coverage rating: partly (1).
+Creating and sharing links, tracking payments and settlements (E-078, E-080). It does not document deciding whom to chase, WhatsApp reminders in the owner's voice, or logging a promise. Agent Studio lists no agent for a merchant's unpaid links (E-085). Coverage rating: partly (1).
 
 ## Limits of this evidence
 

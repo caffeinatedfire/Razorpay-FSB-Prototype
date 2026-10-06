@@ -35,6 +35,10 @@ D-14 | 2026-10-06T13:40+05:30 | Code `mobile_signal` 1 only when the text says t
 
 D-15 | 2026-10-06T13:45+05:30 | Recommend a provisional lock on Collect at G1 | Recommend a switch to payouts or disputes | Collect wins the formula as coded and is the most phone-native job; the alternatives hurt more, but their fixes sit in Razorpay's risk and support processes. The human decides | agent
 
+D-16 | 2026-10-06T14:05+05:30 | Collect is provisionally locked. The note states the lock is provisional, gives n = 37 first-hand Collect rows, and calls H1 to H3 weak | full lock; switch | Per the human's G1 reply | human
+
+D-17 | 2026-10-06T14:05+05:30 | Use the human's chat notes only as pointers: re-read each cited source and code 5 of them as context rows (E-085 to E-089, origin human_inbox). Add no first-hand rows from them | coding the notes' own claims as evidence | The notes say no forum data was collected; several claims in them are tagged Likely | agent
+
 ## Human answers before P0 (verbatim)
 
 PRE-P0 | 2026-10-06T13:16+05:30 | Q: Where should the repo be created? A: "D:\ISB\Razorpay\ (Recommended)"
@@ -44,3 +48,7 @@ PRE-P0 | 2026-10-06T13:16+05:30 | Q: Which optional inputs from section 1 will y
 PRE-P0 | 2026-10-06T13:16+05:30 | Q: Do the gate windows work? A: "Gate timing is suggestive, I may advance or delay as feasible in my schedule"
 
 ## Gate replies
+
+GATE G1 | 2026-10-06T13:59+05:30 | approved with changes: lock Collect provisionally
+
+uploaded evidence notes at docs/evidence/inbox/razorpay-track2-chat-notes

@@ -162,7 +162,7 @@ Gate out: P0-A01 to P0-A04 pass. No human gate.
 
 ## Phase P1: Evidence and problem lock
 
-Status: waiting at G1
+Status: done (G1 approved with changes: provisional lock)
 Target: Tue 6 Oct, 7:00 PM IST (2026-10-06T19:00+05:30)
 Agent hours: 4
 Gate in: P0 done
@@ -173,7 +173,7 @@ Gate out: P1-A01 to P1-A05 pass, then gate G1. Next phase waits for the human's 
 **Why now.** The brief judges importance and clarity of the problem and depth of merchant understanding. With no interviews, a transparent public-evidence table is the only defensible substitute, and its limits must be stated.
 
 **Tasks.**
-- [x] (inbox empty at 13:40; re-run when the human adds files) P1-T01 Intake. Read everything in `docs/evidence/inbox/`. Normalise each usable item into `docs/evidence/coded.csv` using the schema in Appendix G, with `origin: human_inbox`. Skip and log items with handles you cannot strip.
+- [x] (inbox read 14:02: chat notes, no coded items; 5 cited sources re-read and coded as human_inbox context rows E-085 to E-089) P1-T01 Intake. Read everything in `docs/evidence/inbox/`. Normalise each usable item into `docs/evidence/coded.csv` using the schema in Appendix G, with `origin: human_inbox`. Skip and log items with handles you cannot strip.
 - [x] P1-T02 Existing-product check. Re-read these pages and record in `docs/evidence/existing-product.md` what Razorpay's mobile app and Payment Links already do for unpaid links, with URL and access date for each: `https://razorpay.com/payments-app/`, the Razorpay app listings on the App Store and Google Play (`com.razorpay.payments.app`), `https://razorpay.com/docs/payments/payment-links/reminders/` and `https://razorpay.com/docs/payments/payment-links/`. As read on 3 Oct 2026 `[Certain]`: link reminders are automatic, SMS and email only, at most 3 per link, sent only 11 AM to 12 PM and 3 PM to 5 PM; WhatsApp is not listed; the docs do not say whether reminders are configurable from the mobile app. Confirm or correct each point. Also read the public Razorpay disputes and settlements documentation pages that search turns up, for the other two jobs. Rate how much of each job the app and docs already cover: 0 fully, 1 partly, 2 not covered or not documented (Appendix G uses these ratings).
 - [x] P1-T03 Mine public sources using the search plan in Appendix G. Target 60 coded rows in total, at least 25 first-hand rows (forum and app-review items) for the Collect job, at least 10 first-hand rows each for the two alternative jobs (card disputes, held payouts). Hard floor 40 total. Log every source tried, read or blocked, in `docs/evidence/sources-log.md`.
 - [x] P1-T04 Code every item with the scheme in Appendix G. Then re-code a random 20% blind to the first pass and write the percentage agreement on the `job` field to `docs/evidence/agreement.json`.
@@ -195,7 +195,7 @@ Gate out: P1-A01 to P1-A05 pass, then gate G1. Next phase waits for the human's 
 
 ## Phase P2: Design and storyboard
 
-Status: not started
+Status: in progress
 Target: Wed 7 Oct, 9:00 AM IST (2026-10-07T09:00+05:30), ready for review
 Agent hours: 3
 Gate in: G1 approved

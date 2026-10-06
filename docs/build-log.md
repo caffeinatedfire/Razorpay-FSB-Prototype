@@ -25,3 +25,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 5
 - AI was wrong about: the request count. I estimated it instead of adding up the script runs (2 + 10 + 2 debug + 42 + 6 + 64).
 - Commit: see `git log`
+
+### 2026-10-06T14:06+05:30 | G1 changes, P1-T01 | provisional lock, inbox intake
+- Did: logged the G1 reply verbatim; marked PROBLEM.md as provisionally locked; read the human's notes; re-read 5 cited sources and coded them as E-085 to E-089 (context, human_inbox); updated existing-product.md (Agent Studio has no collections agent for links; the blog says the system picks reminder hours) and sources-log.md. Job score unchanged (context rows do not count).
+- Why: G1 reply "approved with changes: lock Collect provisionally"; P1-T01.
+- Checks: P1-A01 to P1-A05 re-run -> pass (89 rows; PROBLEM.md 450 words outside tables; guard: ok; KEEP COLLECT)
+- Minutes: 10
+- AI was wrong about: adding the status line pushed PROBLEM.md to 476 words, over the 450 limit; trimmed to 450.
+- Commit: see `git log`

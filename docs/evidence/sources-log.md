@@ -37,3 +37,10 @@ Raw downloads (which contain reviewer names) were kept outside the repo, in the 
 | 13:38 | Payment Links docs: resend, whatsapp-bot, create, states (markdown versions) | Read | E-075, E-076, E-077 |
 
 Not used: the Razorpay blog posts on reminders (marketing; the docs cover the facts), and generic US or UK "how to ask for payment" blogs (not Indian merchants).
+| 14:02 | Human inbox: `docs/evidence/inbox/razorpay-track2-chat-notes.md` | Read. Chat notes, not coded items: "No forum data was collected in this chat." Used only as pointers to sources; each source re-read below | 0 directly |
+| 14:03 | https://razorpay.com/agent-studio/ (raw page) | Read: 29 agent names; no collections agent for Payment Links | E-085 |
+| 14:03 | https://razorpay.com/blog/automate-payment-reminders/ | Read | E-086 |
+| 14:03 | The Rise, Delayed Payments Report 3.0 article | Read | E-087 |
+| 14:03 | SME Street, Delayed Payments Report 3.0 article | Read; gives the MSME count as 6.4 crore where The Rise says 6.4 million, so the count is not used | E-088 |
+| 14:03 | TaxGuru, Section 43B(h) article | Read | E-089 |
+| 14:03 | Not re-read: newsroom launch post, Agentic Dashboard blog, MediaNama, RTO risk docs, Shopify thread | Not about chasing overdue links, or about AI agents dropped with Track 2 | 0 |

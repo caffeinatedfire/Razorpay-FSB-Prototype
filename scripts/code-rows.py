@@ -137,6 +137,16 @@ CONTEXT = [
  ('payout','official_docs','https://razorpay.com/docs/payments/settlements/','unknown',1,'desktop','Razorpay','none','',0,'The standard settlement cycle for domestic payments is T+2 working days','Dashboard actions listed; mobile app not mentioned'),
 ]
 
+# Pointers taken from the human's notes (docs/evidence/inbox/razorpay-track2-chat-notes.md), each re-read
+# on 2026-10-06 before coding. origin is human_inbox. (job, type, url, posted, quote, notes)
+INBOX = [
+ ('collect','official_docs','https://razorpay.com/agent-studio/','unknown','Loan Recovery Agent Reaches borrowers after missed repayments and helps recover the loan at the right moment.','29 agent names on the page, grouped by industry (lending, insurance, investments, e-commerce); none chases a merchant\'s unpaid Payment Links or invoices; Dispute Responder and Chargeback Defence agents exist; result claims are Razorpay\'s own'),
+ ('collect','official_docs','https://razorpay.com/blog/automate-payment-reminders/','unknown','The reminders will be sent at a time in the day based on our analysis of the payment patterns','Razorpay blog; schedule options "the day after you send the link" or "1 day before expiry"; SMS/email; the merchant does not pick the hour'),
+ ('collect','article','https://www.the-rise.in/news/single-news.php?title=delayed-payments-to-msme-decline,-but-hurdle-remains:-game-fisme-report&id=267','2025-11-27','Delayed payments owed to India\'s 6.4 million MSMEs have decreased by 30%, from Rs 10.7 lakh crore in 2022','Delayed Payments Report 3.0 (GAME, FISME, C2FO): Rs 7.34 lakh crore as of March 2024; B2B trade credit, not Payment Links; SME Street gives the MSME count as 6.4 crore, so the count is not used'),
+ ('collect','article','https://smestreet.in/infocus/delayed-payments-report-30-highlights-msme-finance-progress-10816194','2025-11-27','with average payment delays up to three times higher than those faced by larger firms.','Same report; micro units most affected; B2B trade credit'),
+ ('collect','article','https://taxguru.in/income-tax/section-43bh-disallowances-expenses-due-non-payment-msmes.html','2024-03-28','Agreed Date OR Within 45 days from the date of acceptance, WHICHEVER IS EARLIER','Section 43B(h): buyer loses the deduction if a registered micro or small supplier is paid late; 15 days without a written agreement; CA-written article, not an official page'),
+]
+
 rows = []
 n = 0
 for (job, app, rid, start, nw, seg, pain, dev, work, stake, mob, notes) in FIRST_HAND:
@@ -167,6 +177,15 @@ for (job, st, url, seg, pain, dev, tool, work, stake, mob, quote, notes) in CONT
                  'accessed_on': ACCESSED, 'posted_on': 'unknown' if 'riffit' not in url else '2026-08-17', 'job': job,
                  'segment': seg, 'pain': pain, 'device_or_channel': dev, 'tool_mentioned': tool, 'workaround': work,
                  'stake_inr': stake, 'mobile_signal': mob, 'quote': '"' + quote + '"', 'notes': 'context row; ' + notes})
+
+for (job, st, url, posted, quote, notes) in INBOX:
+    n += 1
+    assert len(quote.split(' ')) <= 20, quote
+    rows.append({'id': f'E-{n:03d}', 'origin': 'human_inbox', 'source_type': st, 'url': url,
+                 'accessed_on': ACCESSED, 'posted_on': posted, 'job': job, 'segment': 'unknown', 'pain': 1,
+                 'device_or_channel': 'unknown', 'tool_mentioned': 'Razorpay' if 'razorpay.com' in url else '',
+                 'workaround': 'none', 'stake_inr': '', 'mobile_signal': 0, 'quote': '"' + quote + '"',
+                 'notes': 'context row; pointer from the human\'s notes, re-read by the agent; ' + notes})
 
 cols = ['id','origin','source_type','url','accessed_on','posted_on','job','segment','pain','device_or_channel',
         'tool_mentioned','workaround','stake_inr','mobile_signal','quote','notes']
