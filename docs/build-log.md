@@ -17,3 +17,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 25
 - AI was wrong about: (1) the web-fetch tool returned nothing for the Play listing and summarised the App Store page in its own words, so I switched to raw page text for every quote; (2) my first Play pagination code read the wrong field for the next-page token and crashed; (3) my first shell heredoc mangled a backslash in Python (a gotcha the owner had already recorded), so scripts are written with the editor; (4) I first drafted the persona with an invented business name that implied a gender, then removed it; (5) I first mis-added the n=25 sensitivity scores in job-score.md (0.655/0.628 instead of 0.683/0.655) and fixed them before the gate.
 - Commit: see `git log` (P1: evidence and problem lock)
+
+### 2026-10-06T14:00+05:30 | P1 fix | request count and tool for the Play reviews
+- Did: corrected G1.md, D-13 and sources-log.md. The Play reviews took up to 126 requests from a Python script, not "about 60"; I now also say the plan's web tools were not used for them.
+- Why: the human asked at G1 which tool made the requests and how many.
+- Checks: npm run check -> pass
+- Minutes: 5
+- AI was wrong about: the request count. I estimated it instead of adding up the script runs (2 + 10 + 2 debug + 42 + 6 + 64).
+- Commit: see `git log`

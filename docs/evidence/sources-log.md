@@ -9,7 +9,7 @@ Raw downloads (which contain reviewer names) were kept outside the repo, in the 
 | 13:23 | https://razorpay.com/docs/payments/payment-links/reminders/ | Read (fetch tool, then raw page to check wording) | E-074 |
 | 13:23 | https://razorpay.com/payments-app/ | Read | E-078 |
 | 13:23 | https://razorpay.com/docs/payments/payment-links/ | Read | 0 (facts used in existing-product.md) |
-| 13:23 | Google Play listing, Razorpay app, via fetch tool | Fetch tool returned no content | 0 |
+| 13:23 | Google Play listing, Razorpay app, via fetch tool | Fetch tool returned no usable content (not an HTTP refusal); page then read with curl | 0 |
 | 13:24 | https://razorpay.com/docs/payments/payment-links/manage/ | 404 | 0 |
 | 13:24 | https://razorpay.com/docs/payments/dashboard/payment-links/ | 404 | 0 |
 | 13:24 | Web search "Razorpay Payments app App Store apps.apple.com" | Found iOS id1497250144 | 0 |
@@ -20,7 +20,7 @@ Raw downloads (which contain reviewer names) were kept outside the repo, in the 
 | 13:27 | reddit.com search JSON | Refused (HTTP 403), attempt 1 | 0 |
 | 13:27 | old.reddit.com search | Refused (HTTP 403), attempt 2 | 0 |
 | 13:33 | reddit.com via fetch tool | Refused ("unable to fetch"), attempt 3: Reddit logged as **blocked** | 0 |
-| 13:28 | Google Play public reviews, via the listing page's own "See all reviews" data endpoint (no login), sorted by most relevant and newest | Khatabook 1,130; OkCredit 1,152; Vyapar 1,133; Razorpay 2,534; Paytm for Business 3,039; PhonePe Business 2,777; BharatPe 3,180; Cashfree 793 (15,738 total) | E-001 to E-071 |
+| 13:28 | Google Play public reviews, via the listing page's own "See all reviews" data endpoint (no login), sorted by most relevant and newest; Python urllib from the shell, up to 126 requests 1.5 s apart, none refused (one empty reply caused by my own pagination bug) | Khatabook 1,130; OkCredit 1,152; Vyapar 1,133; Razorpay 2,534; Paytm for Business 3,039; PhonePe Business 2,777; BharatPe 3,180; Cashfree 793 (15,738 total) | E-001 to E-071 |
 | 13:29 | Keyword filters over those reviews | Raw hits: collect 510, payout 999, dispute 32 (loose matches) | see above |
 | 13:30 | Play package ids tried and not found (404): com.khatabook.android, com.flobiz.android, com.instamojo.app, com.cashfree.payments, com.payu.merchant, com.payu.india.merchant, com.pinelabs.plutus, com.instamojo.android, com.mswipe.wisepos, com.ezetap.merchant | Not found | 0 |
 | 13:31 | Web search "freelancer client payment pending reminder WhatsApp India reddit" | Vendor blogs; no Reddit results | 0 |
