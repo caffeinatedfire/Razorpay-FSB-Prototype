@@ -1,0 +1,45 @@
+{
+  "name": "razorpay-collect-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Collect: a concept prototype for chasing overdue Payment Links on a phone. Synthetic data, nothing is sent.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite --port 5173",
+    "lan": "node scripts/lan.mjs",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:rules": "vitest run tests/rules",
+    "e2e": "playwright test",
+    "guard": "node scripts/guard.mjs",
+    "check": "npm run typecheck && npm run test && npm run guard",
+    "fixtures:gen": "tsx scripts/gen-fixtures.ts",
+    "fixtures:verify": "tsx scripts/gen-fixtures.ts --verify",
+    "demo:record": "tsx demo/run.ts",
+    "note:pdf": "tsx scripts/note-pdf.ts",
+    "bridge": "tsx bridge/server.ts"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.3",
+    "@playwright/test": "1.63.0",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "20.19.43",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "4.7.0",
+    "jsdom": "26.1.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vite": "6.4.4",
+    "vitest": "3.2.7"
+  }
+}

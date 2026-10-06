@@ -1,0 +1,8 @@
+{
+  "name": "Collect (concept prototype)",
+  "short_name": "Collect",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f3a5f"
+}
