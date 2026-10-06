@@ -33,3 +33,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 10
 - AI was wrong about: adding the status line pushed PROBLEM.md to 476 words, over the 450 limit; trimmed to 450.
 - Commit: see `git log`
+
+### 2026-10-06T14:35+05:30 | P2-T01 to P2-T09 | design, storyboard, gate G2
+- Did: journey map with persona card; 7 wireframes (S1 to S6 plus the send sheet) rendered at 390 x 844 by scripts/render-wireframes.mjs; decisions (9, plus 12 not built); metrics (north star, 3 supporting, 3 guardrails, two-minute task); storyboard (90 s); coverage matrix; scripts/check-p2.mjs; G2 pack.
+- Why: P2 goal, judge the product on paper before code (P2-A01 to P2-A05).
+- Checks: node scripts/check-p2.mjs -> 5 of 5 pass; npm run check -> pass (10 tests); guard: ok
+- Minutes: 30
+- AI was wrong about: (1) S5 first showed "Recovered this week: ₹22,000 via link ₹17,000" next to an ₹18,000 link payment, which cannot add up; fixed to ₹40,000 (₹35,000 + ₹5,000), with Home's ₹22,000 as the figure before that payment; (2) the S2 length counter was a guess (134); measured as 146; (3) two decision rows cited evidence that did not support them (E-031/E-032 for "ledger apps do invoicing"; E-080 for owner behaviour); reworded.
+- Commit: see `git log`

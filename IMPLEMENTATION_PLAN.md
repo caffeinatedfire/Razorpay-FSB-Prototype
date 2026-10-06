@@ -195,7 +195,7 @@ Gate out: P1-A01 to P1-A05 pass, then gate G1. Next phase waits for the human's 
 
 ## Phase P2: Design and storyboard
 
-Status: in progress
+Status: waiting at G2
 Target: Wed 7 Oct, 9:00 AM IST (2026-10-07T09:00+05:30), ready for review
 Agent hours: 3
 Gate in: G1 approved
@@ -204,22 +204,22 @@ Gate out: P2-A01 to P2-A05 pass, then gate G2.
 **Goal.** Everything the human needs to judge the product on paper before code: today-versus-tomorrow journey, wireframes of six screens, decisions with rejected alternatives, metrics, the 90-second storyboard, and a matrix proving the six Track 1 elements are covered.
 
 **Tasks.**
-- [ ] P2-T01 Journey map in `docs/design/journey.md`: "Today" versus "With Collect", step by step, each friction point tagged with evidence IDs from `coded.csv`.
-- [ ] P2-T02 Persona card (composite, labelled fictional) and the job statement, copied from `PROBLEM.md`.
-- [ ] P2-T03 Wireframes for S1 to S6 (Appendix E) as static HTML in `docs/design/wireframes/`, exported to PNG at 390 by 844 with Playwright. Each PNG caption names the Track 1 element it supports.
-- [ ] P2-T04 Decisions in `docs/design/decisions.md`: at least five product decisions, each stating the choice, the rejected alternative and the reason. Include "what I chose not to build" with at least six items (Appendix D lists starters).
-- [ ] P2-T05 Metrics in `docs/design/metrics.md`: one north star, three supporting metrics, three guardrails, each with a definition, a baseline marked `assumed`, and the instrumentation event it would use (Appendix E lists the events).
-- [ ] P2-T06 Define "the two-minute task": it starts when the human taps Start in Timed run mode on Home and ends when the Sent screen appears. Target: 120 seconds or less on first use and 8 taps or fewer. Write this in `docs/design/metrics.md`.
-- [ ] P2-T07 Storyboard for the 90-second video from Appendix H, with captions drafted. Total must be 90 seconds or less.
-- [ ] P2-T08 Brief-coverage matrix in `docs/design/coverage.md`: the six Track 1 elements (who and what; how they do it today and friction; why mobile; a flow that finishes the task, ideally in two minutes; key decisions and what was left out; how to measure) against the note section, screen and video seconds that cover each. Add a row for each of the five judging criteria with the evidence you will show.
-- [ ] P2-T09 Prepare the G2 pack and set status to `waiting at G2`.
+- [x] P2-T01 Journey map in `docs/design/journey.md`: "Today" versus "With Collect", step by step, each friction point tagged with evidence IDs from `coded.csv`.
+- [x] P2-T02 Persona card (composite, labelled fictional) and the job statement, copied from `PROBLEM.md`.
+- [x] P2-T03 Wireframes for S1 to S6 (Appendix E) as static HTML in `docs/design/wireframes/`, exported to PNG at 390 by 844 with Playwright. Each PNG caption names the Track 1 element it supports.
+- [x] P2-T04 Decisions in `docs/design/decisions.md`: at least five product decisions, each stating the choice, the rejected alternative and the reason. Include "what I chose not to build" with at least six items (Appendix D lists starters).
+- [x] P2-T05 Metrics in `docs/design/metrics.md`: one north star, three supporting metrics, three guardrails, each with a definition, a baseline marked `assumed`, and the instrumentation event it would use (Appendix E lists the events).
+- [x] P2-T06 Define "the two-minute task": it starts when the human taps Start in Timed run mode on Home and ends when the Sent screen appears. Target: 120 seconds or less on first use and 8 taps or fewer. Write this in `docs/design/metrics.md`.
+- [x] P2-T07 Storyboard for the 90-second video from Appendix H, with captions drafted. Total must be 90 seconds or less.
+- [x] P2-T08 Brief-coverage matrix in `docs/design/coverage.md`: the six Track 1 elements (who and what; how they do it today and friction; why mobile; a flow that finishes the task, ideally in two minutes; key decisions and what was left out; how to measure) against the note section, screen and video seconds that cover each. Add a row for each of the five judging criteria with the evidence you will show.
+- [x] P2-T09 Prepare the G2 pack and set status to `waiting at G2`.
 
 **Acceptance (run these).**
-- [ ] P2-A01 Six PNGs exist at 390 by 844 in `docs/design/wireframes/`.
-- [ ] P2-A02 `decisions.md` has at least 5 decisions and at least 6 not-building items.
-- [ ] P2-A03 `metrics.md` states the north star, 3 supporting metrics, 3 guardrails and the two-minute task definition.
-- [ ] P2-A04 `coverage.md` has all six elements and all five criteria filled, with no empty cell.
-- [ ] P2-A05 The storyboard timings in `docs/design/storyboard.md` sum to 90 seconds or less.
+- [x] P2-A01 Six PNGs exist at 390 by 844 in `docs/design/wireframes/`.
+- [x] P2-A02 `decisions.md` has at least 5 decisions and at least 6 not-building items.
+- [x] P2-A03 `metrics.md` states the north star, 3 supporting metrics, 3 guardrails and the two-minute task definition.
+- [x] P2-A04 `coverage.md` has all six elements and all five criteria filled, with no empty cell.
+- [x] P2-A05 The storyboard timings in `docs/design/storyboard.md` sum to 90 seconds or less.
 
 **If late, cut.** Hindi and Hinglish variants in the storyboard captions.
 
