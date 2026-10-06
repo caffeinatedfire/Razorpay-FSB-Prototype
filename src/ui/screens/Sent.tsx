@@ -12,12 +12,14 @@ export function Sent({ id }: { id: string }) {
   const customer = state.customers.find((c) => c.id === link?.customerId);
   const nextCheck = state.nextCheckAt[id];
   const [run, setRun] = useState<RunResult | null>(null);
+  const [checked, setChecked] = useState(false);
   const [editing, setEditing] = useState(false);
 
   // The two-minute task ends when this screen appears (timed_end).
   useEffect(() => {
     const r = endRun(clock);
     if (r) setRun(r);
+    setChecked(true);
   }, [clock]);
 
   if (!link || !customer) {
@@ -82,6 +84,10 @@ export function Sent({ id }: { id: string }) {
         {run ? (
           <p className="meta" style={{ textAlign: 'center', margin: 0 }} data-testid="run-readout">
             Run time: {Math.round(run.ms / 1000)} s, {run.taps} taps (practice data)
+          </p>
+        ) : checked && state.settings.timedRun ? (
+          <p className="meta" style={{ textAlign: 'center', margin: 0 }} data-testid="run-missing">
+            Timed run is on, but no run was active. To time one, tap Start on Home first.
           </p>
         ) : null}
       </main>

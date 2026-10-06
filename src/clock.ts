@@ -45,7 +45,12 @@ export function clockFromSearch(search: string): Clock {
   return new DemoClock(DEMO_START_ISO);
 }
 
-/** Monotonic milliseconds for measuring how long a timed run took. */
+/** Real wall-clock milliseconds. Timed runs use it so a run survives a page reload. */
+export function systemMs(): number {
+  return Date.now();
+}
+
+/** Monotonic milliseconds since page load. */
 export function monotonicMs(): number {
   return typeof performance !== 'undefined' ? performance.now() : Date.now();
 }

@@ -89,3 +89,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 3
 - AI was wrong about: I wrote the first hint as "first name or a label", which invites testers' real names into a committed file.
 - Commit: see `git log`
+
+### 2026-10-07T02:32+05:30 | P3 fix (during G3) | timed runs lost on the phone
+- Did: the active timed run is now kept in localStorage (`collect.run`) and timed by the wall clock, so a reload mid-run keeps it; runs older than 30 minutes count as abandoned. `npm run lan` now starts Vite without its live-reload socket. The Sent screen says "Timed run is on, but no run was active" instead of showing nothing. New e2e: a run survives a reload; the missing-run message appears.
+- Why: G3 step 1. The human's timings.csv from Firefox on Android had only the header, and the Sent screen showed no run-time line.
+- Checks: npm run check -> pass (66 tests); npm run e2e -> 3 passed; in LAN mode the browser console shows the socket refused and Vite's client code reloads only after a socket that had opened
+- Minutes: 15
+- AI was wrong about: I kept the run only in memory and counted on the page never reloading. Vite's dev client reloads the page when its socket drops and comes back, which a phone does whenever the screen sleeps or the tab goes to the background. The e2e passed in desktop Chromium, where that never happens. Not proven: I could not run Firefox for Android here, so this is the likely cause, not a confirmed one.
+- Commit: see `git log`

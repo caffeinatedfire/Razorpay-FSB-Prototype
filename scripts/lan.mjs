@@ -25,6 +25,7 @@ console.log('');
 
 const vite = spawn(process.execPath, [join('node_modules', 'vite', 'bin', 'vite.js'), '--host', '--port', String(PORT), '--strictPort'], {
   stdio: 'inherit',
+  env: { ...process.env, COLLECT_LAN: '1' },
 });
 vite.on('exit', (code) => process.exit(code ?? 0));
 for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => vite.kill(sig));
