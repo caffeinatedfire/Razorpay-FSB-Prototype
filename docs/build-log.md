@@ -97,3 +97,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 15
 - AI was wrong about: I kept the run only in memory and counted on the page never reloading. Vite's dev client reloads the page when its socket drops and comes back, which a phone does whenever the screen sleeps or the tab goes to the background. The e2e passed in desktop Chromium, where that never happens. Not proven: I could not run Firefox for Android here, so this is the likely cause, not a confirmed one.
 - Commit: see `git log`
+
+### 2026-10-07T17:24+05:30 | check of the human's deploy (during G3) | https://rzp-fsb-cf-ptype.vercel.app/
+- Did: checked the Vercel deploy the human made from the GitHub remote they added. The deployed bundle (index-Jea5Gxb3.js) is byte-identical by file hash to a local build of 3e1a806, the latest commit. Scanned it: no WhatsApp deep link, no "rzp_", no hand-off code, no owner number, no 10-digit mobile-like number; "SIMULATED" present. Ran a timed run on the live site at 375 x 812 with a reload in the middle: the run survived and was recorded (3 taps); no sideways scroll.
+- Why: the human asked "Check if this is fine". The agent does not deploy (P7-T01); the human did.
+- Checks: node scripts/guard.mjs --history -> guard: ok (working tree and history); manifest 200
+- Minutes: 10
+- AI was wrong about: nothing found wrong in the deploy. Noted: the GitHub repository answers without login, so it is public, along with the whole history (plan, logs, evidence table). The untracked chat-notes file was not pushed.
+- Commit: see `git log`
