@@ -6,3 +6,25 @@ out
 test-results
 playwright-report
 *.local.json
+
+# Working files for the build process. They stay on this machine but are not part of the
+# submission, so git does not track them (decision D-24). Submission files (README, app code,
+# tests, fixtures, and later note/, demo/, submission/, docs/ai-build-log.md) stay tracked.
+.claude/
+CLAUDE.md
+IMPLEMENTATION_PLAN.md
+docs/PROBLEM.md
+docs/assumptions.md
+docs/build-log.md
+docs/capabilities.md
+docs/decision-log.md
+docs/form-fields.md
+docs/design/
+docs/evidence/
+docs/gates/
+scripts/check-p2.mjs
+scripts/code-rows.py
+scripts/fetch-play-reviews.py
+scripts/filter-reviews.py
+scripts/job-score.mjs
+scripts/render-wireframes.mjs

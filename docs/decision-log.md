@@ -51,6 +51,8 @@ D-22 | 2026-10-06T14:38+05:30 | Built early in P3 because P3 or G3 needs them: R
 
 D-23 | 2026-10-06T14:38+05:30 | Individual customers in the fixtures have first names only ("Kiran", not "Kiran Joshi" as in the S1 wireframe) | full invented names | Appendix C says invented first names; a full name looks more like a real person | agent
 
+D-24 | 2026-10-07T17:35+05:30 | Working files (plan, CLAUDE.md, logs, gates, evidence, design docs, research scripts) are git-ignored and are to be removed from the index; they stay on this machine. Human's instruction, verbatim: "Add files such as evidence, logs etc that are not needed for the submission to git ignore and tell me how to delete them from git" | keep them in the public repo | The human's call. Consequences: these files are no longer backed up by git; earlier commits on GitHub still contain them until the history is rewritten or the repo is made private; the numbers audit (P6) will cite files a reader of the repo cannot open | human
+
 ## Human answers before P0 (verbatim)
 
 PRE-P0 | 2026-10-06T13:16+05:30 | Q: Where should the repo be created? A: "D:\ISB\Razorpay\ (Recommended)"
