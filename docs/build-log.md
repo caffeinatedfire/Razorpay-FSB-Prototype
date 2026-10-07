@@ -105,3 +105,11 @@ Append only. One entry per task (plan Appendix I1). Times IST.
 - Minutes: 10
 - AI was wrong about: nothing found wrong in the deploy. Noted: the GitHub repository answers without login, so it is public, along with the whole history (plan, logs, evidence table). The untracked chat-notes file was not pushed.
 - Commit: see `git log`
+
+### 2026-10-07T17:35+05:30 | housekeeping (during G3) | working files git-ignored
+- Did: added the plan, CLAUDE.md, logs, gates, evidence, design docs, research scripts and .claude/ to .gitignore, by explicit path so that future submission files stay tracked. Checked first that no build, test, deploy or guard step reads them (only a comment in src/domain/types.ts and the e2e screenshot output path mention docs).
+- Why: D-24, the human's instruction.
+- Checks: npm run check -> pass (66 tests), guard: ok
+- Minutes: 6
+- AI was wrong about: my first script to write this entry crashed (it called rstrip on a file object), so the .gitignore commit went in without this entry; added in a follow-up commit.
+- Commit: see `git log`
