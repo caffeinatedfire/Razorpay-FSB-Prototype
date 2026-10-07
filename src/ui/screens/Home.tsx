@@ -42,8 +42,17 @@ export function Home() {
   return (
     <>
       <div className="scroll">
-        <Header title="Collect" extra={<span className="tag">Concept prototype</span>} />
+        <Header
+          className="hero"
+          title="Collect"
+          extra={<p className="sub">Concept prototype · not a Razorpay product</p>}
+        />
         <main className="page" id="main">
+          <section className="card summary" aria-label="Summary">
+            <p className="big">{formatINR(home.owedPaise)} owed</p>
+            <p className="small">across {home.overdueCount} overdue links</p>
+          </section>
+
           {state.settings.timedRun ? (
             <section className="card timed" aria-label="Timed run">
               {running ? (
@@ -63,11 +72,6 @@ export function Home() {
               )}
             </section>
           ) : null}
-
-          <section className="card summary" aria-label="Summary">
-            <p className="big">{formatINR(home.owedPaise)} owed</p>
-            <p className="small">across {home.overdueCount} overdue links</p>
-          </section>
 
           {home.chaseToday.length === 0 ? (
             <p className="empty">
@@ -168,7 +172,7 @@ function Collapsible({
           <span>
             {title} <span className="count">{summary}</span>
           </span>
-          <span aria-hidden="true">{open ? '˄' : '›'}</span>
+          <span aria-hidden="true" className="arrow">{open ? '˄' : '›'}</span>
         </button>
       </h2>
       {open ? (
