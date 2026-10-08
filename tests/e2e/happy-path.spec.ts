@@ -79,5 +79,7 @@ test('happy path: Home -> Chase -> simulated send -> Sent, in 8 taps or fewer', 
   expect(link.touchCount).toBe(1);
   const end = stored.events.find((e: { name: string }) => e.name === 'timed_end');
   expect(end.data.taps).toBe(taps);
+  // One card open, one chase_open: the screen must not remount on the way to Sent (G4 bug).
+  expect(stored.events.filter((e: { name: string }) => e.name === 'chase_open')).toHaveLength(1);
   console.log(`happy path: ${taps} taps from Start to Sent`);
 });

@@ -50,6 +50,11 @@ export function parseRoute(hash: string): Route {
   return { name: 'home' };
 }
 
+/** One key per screen. Keyed on the parsed route, not window.location.hash, which can change before React re-renders. */
+function routeKey(r: Route): string {
+  return 'id' in r ? `${r.name}:${r.id}` : r.name;
+}
+
 export function go(path: string): void {
   window.location.hash = path;
 }
@@ -124,7 +129,7 @@ export function App() {
             You are offline. Collect still works: everything is on this phone.
           </p>
         )}
-        <ScreenBoundary key={window.location.hash} onReset={() => dispatch({ type: 'RESET' })}>
+        <ScreenBoundary key={routeKey(route)} onReset={() => dispatch({ type: 'RESET' })}>
           {screen}
         </ScreenBoundary>
       </div>

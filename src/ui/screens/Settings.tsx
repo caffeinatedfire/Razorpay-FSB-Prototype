@@ -9,7 +9,7 @@ import { LANG_LABELS, TONE_LABELS, signOff } from '../../templates';
 import { useApp } from '../App';
 import { BottomNav, Header, Segmented, Sim } from '../components/Chrome';
 
-export const PAYMENT_DELAY_MS = 10_000;
+export const PAYMENT_DELAY_MS = 5_000;
 
 /** S6: the owner's rules and defaults, demo data, and the SIMULATED demo controls. */
 export function Settings() {
@@ -162,7 +162,7 @@ export function Settings() {
               Simulate: payment arrives
             </button>
             <button type="button" className="btn ghost wide" disabled={!chosen} onClick={() => simulatePayment(PAYMENT_DELAY_MS)}>
-              Simulate: payment arrives in 10 s
+              Simulate: payment arrives in {PAYMENT_DELAY_MS / 1000} s
             </button>
             <button
               type="button"

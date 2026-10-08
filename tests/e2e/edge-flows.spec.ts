@@ -75,7 +75,7 @@ test('stale flow: a payment that lands while the card is open stops the send wit
   const { id } = await openTopCard(page);
   await page.goto(`/?demo=1#/settings`);
   await page.locator('#demo-link').selectOption(id);
-  await page.getByRole('button', { name: 'Simulate: payment arrives in 10 s' }).click();
+  await page.getByRole('button', { name: 'Simulate: payment arrives in 5 s' }).click();
   await page.evaluate((linkId) => { window.location.hash = `/chase/${linkId}`; }, id);
   await page.getByRole('button', { name: 'Send on WhatsApp' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();

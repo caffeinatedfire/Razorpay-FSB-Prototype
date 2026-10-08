@@ -57,8 +57,13 @@ export function Chase({ id }: { id: string }) {
     if (pendingSoft) logEvent('soft_block_shown', clock, { rule: pendingSoft, linkId: id });
   }, [pendingSoft, clock, id]);
 
+  // Once per open, also under React's development double-run of effects (the ref survives it).
+  const openLogged = useRef(false);
   useEffect(() => {
-    if (link) logEvent('chase_open', clock, { linkId: link.id }); // once per open
+    if (link && !openLogged.current) {
+      openLogged.current = true;
+      logEvent('chase_open', clock, { linkId: link.id });
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!link || !customer) {
