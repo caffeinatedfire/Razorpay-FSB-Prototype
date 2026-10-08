@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
-import { formatDayShort, istDate, parseIso } from '../../clock';
+import { formatDayShort, istDate, parseIso, systemMs, toIstIso } from '../../clock';
 import { amountDuePaise } from '../../domain/derive';
 import { formatINR } from '../../format';
-import { endRun, type RunResult } from '../../instrumentation';
+import { endRun, logEvent, type RunResult } from '../../instrumentation';
+import { UNDO_WINDOW_MS, r16CanUndo } from '../../rules';
 import { go, useApp } from '../App';
 import { Header, Sim } from '../components/Chrome';
+
+function undoSecondsLeft(sentAtMs: number): number {
+  return r16CanUndo(sentAtMs, systemMs()) ? Math.ceil((UNDO_WINDOW_MS - (systemMs() - sentAtMs)) / 1000) : 0;
+}
 
 export function Sent({ id }: { id: string }) {
   const { state, dispatch, clock } = useApp();
@@ -14,6 +19,17 @@ export function Sent({ id }: { id: string }) {
   const [run, setRun] = useState<RunResult | null>(null);
   const [checked, setChecked] = useState(false);
   const [editing, setEditing] = useState(false);
+  const last = state.lastSend && state.lastSend.linkId === id ? state.lastSend : null;
+  const [undoLeft, setUndoLeft] = useState(() => (last ? undoSecondsLeft(last.sentAtMs) : 0));
+
+  // R16: a 10-second undo, counted in real time.
+  useEffect(() => {
+    if (!last) return;
+    const tick = () => setUndoLeft(undoSecondsLeft(last.sentAtMs));
+    tick();
+    const t = window.setInterval(tick, 250);
+    return () => window.clearInterval(t);
+  }, [last]);
 
   // The two-minute task ends when this screen appears (timed_end).
   useEffect(() => {
@@ -78,7 +94,31 @@ export function Sent({ id }: { id: string }) {
           </p>
         </section>
 
-        <button type="button" className="btn wide" onClick={() => go('/')}>
+        {last && undoLeft > 0 ? (
+          <section className="card stack" aria-label="Undo">
+            <div className="row">
+              <span>Undo · {undoLeft} s</span>
+              <button
+                type="button"
+                className="btn ghost"
+                onClick={() => {
+                  if (!r16CanUndo(last.sentAtMs, systemMs())) return setUndoLeft(0);
+                  dispatch({ type: 'UNDO_SEND', linkId: id, at: toIstIso(clock.now()) });
+                  logEvent('undo', clock, { linkId: id });
+                  go('/');
+                }}
+              >
+                Undo
+              </button>
+            </div>
+            <p className="meta" style={{ margin: 0 }}>Undo only updates this app. It cannot unsend a message.</p>
+          </section>
+        ) : null}
+
+        <button type="button" className="btn wide" onClick={() => go(`/reply/${id}`)}>
+          Log a reply
+        </button>
+        <button type="button" className="btn ghost wide" onClick={() => go('/')}>
           Back to list
         </button>
         {run ? (

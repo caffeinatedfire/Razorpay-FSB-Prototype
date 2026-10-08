@@ -26,7 +26,10 @@ export function Activity() {
             <ul className="timeline">
               {events.map((e) => (
                 <li key={e.id}>
-                  <div>{e.detail}</div>
+                  <div>
+                    {e.kind === 'paid' ? <span className="chip ok" style={{ marginTop: 0, marginRight: 6 }}>Paid</span> : null}
+                    {e.detail}
+                  </div>
                   <div className="meta">
                     {formatDayShort(parseIso(e.at))}, {formatTime(parseIso(e.at))}
                   </div>

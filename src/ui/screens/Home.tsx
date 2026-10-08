@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { formatDayShort, parseIso } from '../../clock';
+import { formatDayShort, formatTime, parseIso } from '../../clock';
+import { formatHhmm, r01QuietHours } from '../../rules';
 import { buildHome, type DecisionView } from '../../decide';
 import { amountDuePaise, daysOverdue, recoveredThisWeek } from '../../domain/derive';
 import { formatINR } from '../../format';
@@ -25,6 +26,7 @@ export function Home() {
     return state.customers.find((c) => c.id === link?.customerId)?.name ?? 'Customer';
   };
   const paid = recoveredThisWeek(state.links, now);
+  const quiet = r01QuietHours(now, state.settings) !== null;
   const cards = showAll ? home.chaseToday : home.chaseToday.slice(0, SHOWN);
   const waitingOnPromise = home.waiting.every((d) => d.waitKind === 'promise');
   const waitingPaise = home.waiting
@@ -71,6 +73,12 @@ export function Home() {
                 </>
               )}
             </section>
+          ) : null}
+
+          {quiet ? (
+            <p className="alert soft" role="status" style={{ margin: 0 }} data-testid="quiet-banner">
+              It is {formatTime(now)}. Reminders wait until {formatHhmm(state.settings.quietStart)} unless you choose to send anyway.
+            </p>
           ) : null}
 
           {home.chaseToday.length === 0 ? (

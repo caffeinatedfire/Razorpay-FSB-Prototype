@@ -2,7 +2,7 @@
 // Nothing here leaves the browser.
 
 import fixtures from '../../fixtures/links.synthetic.json';
-import { DAY_MS, addMs, parseIso, toIstIso } from '../clock';
+import { DAY_MS, addMs, formatDayShort, parseIso, toIstIso } from '../clock';
 import { amountDuePaise } from '../domain/derive';
 import type {
   ActivityEvent, Customer, OwnerSettings, PaymentLink, ReplyLog, Touch,
@@ -23,7 +23,18 @@ export interface AppState {
   nextCheckAt: Record<string, string>;
   /** The sender named in the sign-off (D-26). Kept beside the settings so Appendix C types stay as written. */
   owner: OwnerProfile;
+  /** The most recent send, kept so it can be undone for 10 seconds (R16). */
+  lastSend: LastSend | null;
   seq: number;
+}
+
+export interface LastSend {
+  linkId: string;
+  touchId: string;
+  eventId: string;
+  /** Real wall-clock ms of the send; the undo window is real time, not demo time. */
+  sentAtMs: number;
+  prev: { touchCount: number; lastTouchAt: string | null; nextCheckAt: string | null };
 }
 
 export interface OwnerProfile {
@@ -65,7 +76,7 @@ function seedActivity(f: FixtureShape): ActivityEvent[] {
     events.push({ id: `seed_${t.id}`, at: t.sentAt, kind: 'touch', linkId: t.linkId, detail: `Reminder to ${nameOf(t.linkId)} (SIMULATED)` });
   }
   for (const r of f.replies) {
-    const what = r.kind === 'promised_date' ? `promised to pay by ${r.promisedDate}` : r.kind === 'disputes' ? 'disputes it' : r.kind;
+    const what = r.kind === 'promised_date' ? `promised to pay by ${r.promisedDate ? formatDayShort(parseIso(r.promisedDate)) : 'a date'}` : r.kind === 'disputes' ? 'disputes it' : r.kind;
     events.push({ id: `seed_${r.id}`, at: r.loggedAt, kind: 'reply', linkId: r.linkId, detail: `${nameOf(r.linkId)} ${what}` });
   }
   for (const l of f.links) {
@@ -88,18 +99,29 @@ export function initialState(): AppState {
     settings: { ...DEFAULT_SETTINGS },
     nextCheckAt: {},
     owner: { ...DEFAULT_OWNER },
+    lastSend: null,
     seq: 0,
   };
 }
 
 export type Action =
-  | { type: 'SEND_CONFIRMED'; linkId: string; text: string; channel: Touch['channel']; lang: Touch['lang']; tone: Touch['tone']; at: string; nextCheckDays: number }
+  | { type: 'SEND_CONFIRMED'; linkId: string; text: string; channel: Touch['channel']; lang: Touch['lang']; tone: Touch['tone']; at: string; nextCheckDays: number; sentAtMs?: number }
+  | { type: 'UNDO_SEND'; linkId: string; at: string }
+  | { type: 'LOG_REPLY'; linkId: string; kind: ReplyLog['kind']; at: string; promisedDate?: string; nextCheckAt?: string }
+  | { type: 'MARK_PAID_OFFLINE'; linkId: string; at: string }
+  | { type: 'SIMULATE_PAYMENT'; linkId: string; at: string }
+  | { type: 'SIMULATE_DISPUTE'; linkId: string; at: string }
   | { type: 'SET_NEXT_CHECK'; linkId: string; at: string }
   | { type: 'SET_SETTINGS'; patch: Partial<OwnerSettings> }
   | { type: 'SET_OWNER'; patch: Partial<OwnerProfile> }
   | { type: 'RESET' };
 
 export const DEFAULT_NEXT_CHECK_DAYS = 2;
+
+function nameFor(state: AppState, linkId: string): string {
+  const link = state.links.find((l) => l.id === linkId);
+  return state.customers.find((c) => c.id === link?.customerId)?.name ?? 'Customer';
+}
 
 export function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -137,6 +159,110 @@ export function reducer(state: AppState, action: Action): AppState {
           ...state.nextCheckAt,
           [link.id]: toIstIso(addMs(parseIso(action.at), action.nextCheckDays * DAY_MS)),
         },
+        lastSend: {
+          linkId: link.id, touchId: touch.id, eventId: event.id, sentAtMs: action.sentAtMs ?? 0,
+          prev: { touchCount: link.touchCount, lastTouchAt: link.lastTouchAt, nextCheckAt: state.nextCheckAt[link.id] ?? null },
+        },
+      };
+    }
+    case 'UNDO_SEND': {
+      // R16: removes the simulated touch and puts the link back as it was. The caller checks the 10-second window.
+      const last = state.lastSend;
+      if (!last || last.linkId !== action.linkId) return state;
+      const nextCheckAt = { ...state.nextCheckAt };
+      if (last.prev.nextCheckAt) nextCheckAt[last.linkId] = last.prev.nextCheckAt;
+      else delete nextCheckAt[last.linkId];
+      const seq = state.seq + 1;
+      return {
+        ...state,
+        seq,
+        links: state.links.map((l) =>
+          l.id === last.linkId ? { ...l, touchCount: last.prev.touchCount, lastTouchAt: last.prev.lastTouchAt } : l,
+        ),
+        touches: state.touches.filter((t) => t.id !== last.touchId),
+        activity: [
+          { id: `ev_local_${seq}`, at: action.at, kind: 'undo', linkId: last.linkId, detail: `Undid the reminder to ${nameFor(state, last.linkId)} (this app only)` },
+          ...state.activity.filter((e) => e.id !== last.eventId),
+        ],
+        nextCheckAt,
+        lastSend: null,
+      };
+    }
+    case 'LOG_REPLY': {
+      const link = state.links.find((l) => l.id === action.linkId);
+      if (!link) return state;
+      const seq = state.seq + 1;
+      const reply: ReplyLog = {
+        id: `reply_local_${seq}`, linkId: link.id, kind: action.kind,
+        promisedDate: action.kind === 'promised_date' ? action.promisedDate ?? null : null, loggedAt: action.at,
+      };
+      const name = nameFor(state, link.id);
+      const nextCheckAt = { ...state.nextCheckAt };
+      let links = state.links;
+      let customers = state.customers;
+      let detail: string;
+      if (action.kind === 'promised_date' && action.promisedDate) {
+        const promised = action.promisedDate;
+        links = links.map((l) => (l.id === link.id ? { ...l, promisedDate: promised } : l));
+        delete nextCheckAt[link.id]; // the promise (R08) decides when to chase again
+        detail = `${name} promised to pay by ${formatDayShort(parseIso(promised))}`;
+      } else if (action.kind === 'disputes') {
+        customers = customers.map((c) => (c.id === link.customerId ? { ...c, disputed: true } : c));
+        detail = `${name} disputes it`;
+      } else if (action.kind === 'says_paid') {
+        if (action.nextCheckAt) nextCheckAt[link.id] = action.nextCheckAt;
+        detail = `${name} says they paid`;
+      } else {
+        if (action.nextCheckAt) nextCheckAt[link.id] = action.nextCheckAt;
+        detail = `No reply yet from ${name}`;
+      }
+      return {
+        ...state, seq, links, customers, nextCheckAt,
+        replies: [...state.replies, reply],
+        activity: [{ id: `ev_local_${seq}`, at: action.at, kind: 'reply', linkId: link.id, detail }, ...state.activity],
+      };
+    }
+    case 'MARK_PAID_OFFLINE': {
+      const link = state.links.find((l) => l.id === action.linkId);
+      if (!link) return state;
+      const seq = state.seq + 1;
+      return {
+        ...state, seq,
+        links: state.links.map((l) => (l.id === link.id ? { ...l, paidOffline: true, paidAt: action.at } : l)),
+        replies: [...state.replies, { id: `reply_local_${seq}`, linkId: link.id, kind: 'says_paid', promisedDate: null, loggedAt: action.at }],
+        activity: [
+          { id: `ev_local_${seq}`, at: action.at, kind: 'paid_offline', linkId: link.id, detail: `${nameFor(state, link.id)}: ${formatINR(amountDuePaise(link))} marked paid offline by you (this app only)` },
+          ...state.activity,
+        ],
+      };
+    }
+    case 'SIMULATE_PAYMENT': {
+      const link = state.links.find((l) => l.id === action.linkId);
+      if (!link || link.status === 'paid') return state;
+      const seq = state.seq + 1;
+      return {
+        ...state, seq,
+        links: state.links.map((l) =>
+          l.id === link.id ? { ...l, status: 'paid', amountPaidPaise: l.amountPaise, paidAt: action.at } : l,
+        ),
+        activity: [
+          { id: `ev_local_${seq}`, at: action.at, kind: 'paid', linkId: link.id, detail: `${nameFor(state, link.id)} paid ${formatINR(amountDuePaise(link))} via link (SIMULATED)` },
+          ...state.activity,
+        ],
+      };
+    }
+    case 'SIMULATE_DISPUTE': {
+      const link = state.links.find((l) => l.id === action.linkId);
+      if (!link) return state;
+      const seq = state.seq + 1;
+      return {
+        ...state, seq,
+        customers: state.customers.map((c) => (c.id === link.customerId ? { ...c, disputed: true } : c)),
+        replies: [...state.replies, { id: `reply_local_${seq}`, linkId: link.id, kind: 'disputes', promisedDate: null, loggedAt: action.at }],
+        activity: [
+          { id: `ev_local_${seq}`, at: action.at, kind: 'reply', linkId: link.id, detail: `${nameFor(state, link.id)} disputes it (SIMULATED)` },
+          ...state.activity,
+        ],
       };
     }
     case 'SET_NEXT_CHECK':
@@ -179,6 +305,7 @@ export function loadState(): AppState {
           ...parsed,
           settings: { ...DEFAULT_SETTINGS, ...parsed.settings },
           owner: { ...DEFAULT_OWNER, ...parsed.owner },
+          lastSend: parsed.lastSend ?? null,
         };
       }
     }

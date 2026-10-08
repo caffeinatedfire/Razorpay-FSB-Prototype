@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useReducer, useState, type Dispatch } from 'react';
+import { Component, createContext, useContext, useEffect, useMemo, useReducer, useState, type Dispatch, type ReactNode } from 'react';
 import { clockFromSearch, formatDayShort, formatTime, type Clock } from '../clock';
 import type { HomeInput } from '../decide';
 import { logEvent } from '../instrumentation';
@@ -6,6 +6,7 @@ import { loadState, reducer, resetDemoData, saveState, type Action, type AppStat
 import { Activity } from './screens/Activity';
 import { Chase } from './screens/Chase';
 import { Home } from './screens/Home';
+import { LogReply } from './screens/LogReply';
 import { Sent } from './screens/Sent';
 import { Settings } from './screens/Settings';
 
@@ -35,6 +36,7 @@ export type Route =
   | { name: 'home' }
   | { name: 'chase'; id: string }
   | { name: 'sent'; id: string }
+  | { name: 'reply'; id: string }
   | { name: 'activity' }
   | { name: 'settings' };
 
@@ -42,6 +44,7 @@ export function parseRoute(hash: string): Route {
   const parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (parts[0] === 'chase' && parts[1]) return { name: 'chase', id: decodeURIComponent(parts[1]) };
   if (parts[0] === 'sent' && parts[1]) return { name: 'sent', id: decodeURIComponent(parts[1]) };
+  if (parts[0] === 'reply' && parts[1]) return { name: 'reply', id: decodeURIComponent(parts[1]) };
   if (parts[0] === 'activity') return { name: 'activity' };
   if (parts[0] === 'settings') return { name: 'settings' };
   return { name: 'home' };
@@ -81,6 +84,7 @@ export function App() {
   const [state, dispatch] = useReducer(reducer, search, initState);
   const [now, setNow] = useState(() => clock.now());
   const route = useHashRoute();
+  const online = useOnline();
 
   useEffect(() => saveState(state), [state]);
   useEffect(() => {
@@ -103,6 +107,7 @@ export function App() {
   switch (route.name) {
     case 'chase': screen = <Chase key={route.id} id={route.id} />; break;
     case 'sent': screen = <Sent key={route.id} id={route.id} />; break;
+    case 'reply': screen = <LogReply key={route.id} id={route.id} />; break;
     case 'activity': screen = <Activity />; break;
     case 'settings': screen = <Settings />; break;
     default: screen = <Home />;
@@ -114,8 +119,59 @@ export function App() {
         <div className="proto" role="note">
           Concept prototype · synthetic data · {formatDayShort(now)}, {formatTime(now)}
         </div>
-        {screen}
+        {online ? null : (
+          <p className="banner offline" role="status">
+            You are offline. Collect still works: everything is on this phone.
+          </p>
+        )}
+        <ScreenBoundary key={window.location.hash} onReset={() => dispatch({ type: 'RESET' })}>
+          {screen}
+        </ScreenBoundary>
       </div>
     </AppContext.Provider>
   );
+}
+
+function useOnline(): boolean {
+  const [online, setOnline] = useState(() => (typeof navigator === 'undefined' ? true : navigator.onLine !== false));
+  useEffect(() => {
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener('online', on);
+    window.addEventListener('offline', off);
+    return () => {
+      window.removeEventListener('online', on);
+      window.removeEventListener('offline', off);
+    };
+  }, []);
+  return online;
+}
+
+/** If a screen throws, show a way out instead of a blank page. */
+class ScreenBoundary extends Component<{ children: ReactNode; onReset: () => void }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    if (!this.state.failed) return this.props.children;
+    return (
+      <main className="page" id="main">
+        <div className="alert hard" role="alert">Something went wrong on this screen. Your data is still on this phone.</div>
+        <button type="button" className="btn wide" onClick={() => go('/')}>
+          Back to Home
+        </button>
+        <button
+          type="button"
+          className="btn ghost wide"
+          onClick={() => {
+            this.props.onReset();
+            go('/');
+          }}
+        >
+          Reset demo data
+        </button>
+      </main>
+    );
+  }
 }

@@ -126,6 +126,13 @@ ul.reasons li { margin: 2px 0; }
 .timeline li:last-child { border-bottom: 0; }
 .toggle { display: flex; align-items: center; justify-content: space-between; min-height: 44px; gap: 12px; }
 .toggle input { width: 24px; height: 24px; accent-color: var(--accent); }
+.field { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 6px; padding: 0 10px; background: #fff; color: var(--ink); }
+.field.narrow { width: auto; min-width: 76px; }
+.field:focus, input[type="time"]:focus, input[type="date"]:focus { outline: 3px solid #1a56db; outline-offset: 1px; }
+input[type="time"] { min-height: 44px; border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; background: #fff; }
+.chip.ok { background: #e7f5ea; color: var(--ok); }
+.banner { border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.banner.offline { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); margin: 8px 16px 0; }
 input[type="date"] { min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 0 8px; background: #fff; }
 
 @media (prefers-reduced-motion: reduce) {

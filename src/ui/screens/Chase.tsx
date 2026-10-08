@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { formatDayMonth, formatDayShort, parseIso, toIstIso } from '../../clock';
+import { formatDayMonth, formatDayShort, parseIso, systemMs, toIstIso } from '../../clock';
 import { decideFor, lastReplyFor } from '../../decide';
 import { amountDuePaise, daysOverdue } from '../../domain/derive';
 import type { Channel, Lang, LinkStatus, PaymentLink, TemplateKind, Tone } from '../../domain/types';
 import { formatINR } from '../../format';
 import { logEvent } from '../../instrumentation';
-import { LENGTH_LIMITS, messageLength, r05Chaseable, r06StatusAtSend, validateMessage, type RuleHit } from '../../rules';
+import {
+  LENGTH_LIMITS, formatHhmm, messageLength, r05Chaseable, r06StatusAtSend, r11BannedLanguage, validateMessage, type RuleHit,
+} from '../../rules';
 import { LANG_LABELS, TONE_LABELS, renderMessage } from '../../templates';
 import { DEFAULT_NEXT_CHECK_DAYS } from '../../store';
 import { go, useApp } from '../App';
@@ -45,9 +47,15 @@ export function Chase({ id }: { id: string }) {
   const [text, setText] = useState(() => render(tone, lang));
   const [edited, setEdited] = useState(false);
   const [hard, setHard] = useState<RuleHit[]>([]);
-  const [softAck, setSoftAck] = useState(false);
+  const [acked, setAcked] = useState<RuleHit['rule'][]>([]);
+  const [threat, setThreat] = useState<RuleHit | null>(null);
   const [sheet, setSheet] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const pendingSoft = decision?.hits.find((h) => h.severity === 'soft' && !acked.includes(h.rule))?.rule ?? null;
+  useEffect(() => {
+    if (pendingSoft) logEvent('soft_block_shown', clock, { rule: pendingSoft, linkId: id });
+  }, [pendingSoft, clock, id]);
 
   useEffect(() => {
     if (link) logEvent('chase_open', clock, { linkId: link.id }); // once per open
@@ -69,8 +77,9 @@ export function Chase({ id }: { id: string }) {
   const length = messageLength(text);
   const settledHit = r05Chaseable(link) && link.status !== 'expired' ? r06StatusAtSend(link, link) : null;
   const decisionHard = decision?.hits.find((h) => h.severity === 'hard') ?? settledHit;
-  const soft = decision?.hits.find((h) => h.severity === 'soft') ?? null;
-  const needsAck = soft !== null && !softAck;
+  // Soft rules (R01 quiet hours, R03 gap, R08 promise) are shown one at a time; each needs its own confirm.
+  const soft = decision?.hits.find((h) => h.severity === 'soft' && !acked.includes(h.rule)) ?? null;
+  const needsAck = soft !== null;
   const replies = state.replies.filter((r) => r.linkId === link.id);
   const lastReply = lastReplyFor(state.replies, link.id);
   const touches = state.touches.filter((t) => t.linkId === link.id);
@@ -100,13 +109,27 @@ export function Chase({ id }: { id: string }) {
     hits.forEach((h) => logEvent('hard_block_shown', clock, { rule: h.rule, linkId: link.id }));
   };
 
-  const trySend = () => {
+  const ack = (rule: RuleHit['rule']) => setAcked((a) => [...a, rule]);
+  const waitUntil = (iso: string | undefined) => {
+    if (iso) dispatch({ type: 'SET_NEXT_CHECK', linkId: link.id, at: iso });
+    go('/');
+  };
+
+  const trySend = (skipThreatCheck = false) => {
     const current = state.links.find((l) => l.id === link.id) ?? link;
     const stale = r06StatusAtSend(opened.current ?? link, current);
     if (stale) return blockHard([stale]);
     const hits = validateMessage(text, current, channel);
     if (hits.length) return blockHard(hits);
     setHard([]);
+    // R11 (soft): only the owner's own edits can introduce banned words; templates are tested clean.
+    const r11 = edited && !skipThreatCheck ? r11BannedLanguage(text) : null;
+    if (r11) {
+      setThreat(r11);
+      logEvent('soft_block_shown', clock, { rule: 'R11', linkId: link.id });
+      return;
+    }
+    setThreat(null);
     setSheet(true);
   };
 
@@ -119,7 +142,7 @@ export function Chase({ id }: { id: string }) {
     }
     dispatch({
       type: 'SEND_CONFIRMED', linkId: link.id, text, channel, lang, tone,
-      at: toIstIso(clock.now()), nextCheckDays: DEFAULT_NEXT_CHECK_DAYS,
+      at: toIstIso(clock.now()), nextCheckDays: DEFAULT_NEXT_CHECK_DAYS, sentAtMs: systemMs(),
     });
     logEvent('send_confirm', clock, { linkId: link.id, channel, lang, tone, edited, touch: link.touchCount + 1 });
     go(`/sent/${link.id}`);
@@ -208,25 +231,58 @@ export function Chase({ id }: { id: string }) {
           {hard.map((h) => (
             <div className="alert hard" role="alert" key={h.rule}>{h.message}</div>
           ))}
-          {!decisionHard && needsAck && soft ? (
-            <div className="alert soft stack" role="status">
+          {!decisionHard && soft ? (
+            <div className="alert soft stack" role="status" data-testid={`soft-${soft.rule}`}>
               <span>{soft.message}</span>
+              {soft.rule === 'R01' ? (
+                <>
+                  <button type="button" className="btn wide" onClick={() => waitUntil(soft.waitUntil)}>
+                    Remind me at {formatHhmm(state.settings.quietStart)}
+                  </button>
+                  <button type="button" className="btn ghost wide" onClick={() => ack('R01')}>
+                    Send anyway
+                  </button>
+                </>
+              ) : soft.rule === 'R03' ? (
+                <div className="row">
+                  <button type="button" className="btn ghost grow" onClick={() => waitUntil(soft.waitUntil)}>
+                    Wait
+                  </button>
+                  <button type="button" className="btn grow" onClick={() => ack('R03')}>
+                    Send anyway
+                  </button>
+                </div>
+              ) : (
+                <div className="row">
+                  <button type="button" className="btn ghost grow" onClick={() => go('/')}>
+                    Wait until {soft.waitUntil ? formatDayShort(parseIso(soft.waitUntil)) : 'later'}
+                  </button>
+                  <button type="button" className="btn grow" onClick={() => ack(soft.rule)}>
+                    Chase anyway
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : null}
+          {threat ? (
+            <div className="alert soft stack" role="status" data-testid="soft-R11">
+              <span>{threat.message}</span>
               <div className="row">
-                <button type="button" className="btn ghost" onClick={() => go('/')}>
-                  Wait until {soft.waitUntil ? formatDayShort(parseIso(soft.waitUntil)) : 'later'}
+                <button type="button" className="btn ghost grow" onClick={() => setThreat(null)}>
+                  Edit message
                 </button>
-                <button type="button" className="btn" onClick={() => setSoftAck(true)}>
-                  Chase anyway
+                <button type="button" className="btn grow" onClick={() => trySend(true)}>
+                  Send anyway
                 </button>
               </div>
             </div>
           ) : null}
-          {lastReply?.kind === 'promised_date' && !soft ? (
+          {lastReply?.kind === 'promised_date' && decision?.templateKind === 'post_promise' ? (
             <p className="meta" style={{ margin: 0 }}>The promised date has passed. This message checks in on it.</p>
           ) : null}
 
-          {!decisionHard && !needsAck ? (
-            <button type="button" className="btn wide" onClick={trySend}>
+          {!decisionHard && !needsAck && !threat ? (
+            <button type="button" className="btn wide" onClick={() => trySend()}>
               {channel === 'whatsapp' ? 'Send on WhatsApp' : 'Send as SMS'}
             </button>
           ) : null}
