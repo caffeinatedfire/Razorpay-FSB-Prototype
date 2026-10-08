@@ -42,8 +42,8 @@ export interface OwnerProfile {
   business: string;
 }
 
-/** Synthetic demo owner, invented like the fixtures. */
-export const DEFAULT_OWNER: OwnerProfile = { name: 'Asha', business: 'Brightline Studio' };
+/** Demo sender: the builder's own name and organisation, by the human's decision at G4 (D-36). Customers stay invented. */
+export const DEFAULT_OWNER: OwnerProfile = { name: 'Samik', business: 'CFI' };
 export const OWNER_NAME_MAX = 30;
 export const BUSINESS_NAME_MAX = 40;
 

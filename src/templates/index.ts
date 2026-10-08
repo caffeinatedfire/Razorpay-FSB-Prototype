@@ -88,7 +88,7 @@ export interface MessageSlots {
   business?: string;
 }
 
-/** "– Asha, Brightline Studio"; "– Asha" with no business; "" with neither. */
+/** "– Samik, CFI"; "– Samik" with no business; "" with neither. */
 export function signOff(owner = '', business = ''): string {
   const parts = [owner.trim(), business.trim()].filter(Boolean);
   return parts.length ? `– ${parts.join(', ')}` : '';
