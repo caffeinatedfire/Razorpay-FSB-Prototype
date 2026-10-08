@@ -2,7 +2,9 @@
 // or a RuleHit when it fires. "hard" blocks the action; "soft" warns and needs a confirm tap.
 // Time-based rules take `now` from the injected Clock (R14); money is integer paise (R13).
 
-import { addDaysToDate, formatDayShort, parseIso } from '../clock';
+import {
+  HOUR_MS, addDaysToDate, formatDayShort, formatTime, hhmmToMinutes, istDate, istMinuteOfDay, parseIso, toIstIso,
+} from '../clock';
 import { amountDuePaise } from '../domain/derive';
 import type { Channel, Customer, OwnerSettings, PaymentLink, ReplyLog } from '../domain/types';
 import { formatINR } from '../format';
@@ -15,7 +17,7 @@ export interface RuleHit {
   rule: RuleId;
   severity: 'hard' | 'soft';
   message: string;
-  /** For waits (R08): when chasing may resume, ISO. */
+  /** For waits (R01, R03, R08): when chasing may resume, ISO. */
   waitUntil?: string;
 }
 
@@ -146,4 +148,84 @@ export function validateMessage(text: string, link: PaymentLink, channel: Channe
   return [r09AmountShown(text, link), r10OneUrl(text, link), r12Length(text, channel)].filter(
     (h): h is RuleHit => h !== null,
   );
+}
+
+// ---- added in P4 -------------------------------------------------------------
+
+/** "09:00" -> "9:00 AM" */
+export function formatHhmm(hhmm: string): string {
+  const m = hhmmToMinutes(hhmm);
+  return formatTime(parseIso(`2026-01-01T${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}:00+05:30`));
+}
+
+/** The next start of the sending window (quietStart), today or tomorrow, as ISO in IST. */
+export function nextWindowStart(now: Date, quietStart: string): string {
+  const start = hhmmToMinutes(quietStart);
+  const day = istMinuteOfDay(now) < start ? istDate(now) : addDaysToDate(istDate(now), 1);
+  return `${day}T${quietStart.padStart(5, '0')}:00+05:30`;
+}
+
+/**
+ * R01 (soft): outside the sending window (default 09:00 to 21:00 IST) the primary action becomes
+ * "Remind me at 9:00 AM"; sending anyway needs a confirm.
+ */
+export function r01QuietHours(now: Date, settings: Pick<OwnerSettings, 'quietStart' | 'quietEnd'>): RuleHit | null {
+  const m = istMinuteOfDay(now);
+  if (m >= hhmmToMinutes(settings.quietStart) && m < hhmmToMinutes(settings.quietEnd)) return null;
+  return {
+    rule: 'R01', severity: 'soft',
+    message: `It is ${formatTime(now)}. Most people prefer payment messages in the daytime.`,
+    waitUntil: nextWindowStart(now, settings.quietStart),
+  };
+}
+
+/** R03 (soft): at least `minGapHours` between touches to the same customer, across all their links. */
+export function r03MinGap(
+  customerLinks: PaymentLink[], customerName: string, now: Date, settings: Pick<OwnerSettings, 'minGapHours'>,
+): RuleHit | null {
+  const last = customerLinks
+    .map((l) => (l.lastTouchAt ? parseIso(l.lastTouchAt).getTime() : null))
+    .filter((t): t is number => t !== null)
+    .reduce((a, b) => Math.max(a, b), Number.NEGATIVE_INFINITY);
+  if (!Number.isFinite(last)) return null;
+  const hours = (now.getTime() - last) / HOUR_MS;
+  if (hours >= settings.minGapHours) return null;
+  return {
+    rule: 'R03', severity: 'soft',
+    message: `You messaged ${customerName} ${Math.max(0, Math.floor(hours))} hours ago. Wait a little longer?`,
+    waitUntil: toIstIso(new Date(last + settings.minGapHours * HOUR_MS)),
+  };
+}
+
+/** Banned-language lexicon (plan Appendix F), matched case-insensitively on whole words. */
+export const BANNED: Record<'en' | 'hinglish' | 'hi', string[]> = {
+  en: ['legal action', 'legal notice', 'court', 'police', 'FIR', 'defaulter', 'fraud', 'cheat', 'shame', 'blacklist', 'last warning', 'or else'],
+  hinglish: ['kanooni', 'kanoon', 'court', 'police', 'dhokha', 'dhokebaaz', 'badnaam', 'FIR'],
+  hi: ['कानूनी', 'कोर्ट', 'पुलिस', 'धोखा', 'बदनाम', 'चेतावनी'],
+};
+
+const escapeRe = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Whole word: not touching another letter, combining mark or digit on either side (works for Devanagari too).
+const BANNED_RE = new RegExp(
+  `(?<![\\p{L}\\p{M}\\p{N}])(${[...new Set(Object.values(BANNED).flat())].map(escapeRe).join('|')})(?![\\p{L}\\p{M}\\p{N}])`,
+  'iu',
+);
+
+/** The first banned term in a text, or null. */
+export function findBanned(text: string): string | null {
+  return BANNED_RE.exec(text)?.[1] ?? null;
+}
+
+/** R11 (soft): banned-language check on owner edits. All templates must pass (tested). */
+export function r11BannedLanguage(text: string): RuleHit | null {
+  return findBanned(text)
+    ? { rule: 'R11', severity: 'soft', message: 'This could read as a threat. Try a friendlier wording.' }
+    : null;
+}
+
+/** R16 (hard): undo is allowed for 10 seconds after a send, measured in real time. */
+export const UNDO_WINDOW_MS = 10_000;
+export function r16CanUndo(sentAtMs: number, nowMs: number): boolean {
+  const elapsed = nowMs - sentAtMs;
+  return elapsed >= 0 && elapsed <= UNDO_WINDOW_MS;
 }

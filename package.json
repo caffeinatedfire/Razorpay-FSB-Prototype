@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:rules": "vitest run tests/rules",
     "e2e": "playwright test",
-    "guard": "node scripts/guard.mjs",
+    "guard": "node scripts/guard.mjs && node scripts/check-rule-coverage.mjs",
     "check": "npm run typecheck && npm run test && npm run guard",
     "fixtures:gen": "tsx scripts/gen-fixtures.ts",
     "fixtures:verify": "tsx scripts/gen-fixtures.ts --verify",

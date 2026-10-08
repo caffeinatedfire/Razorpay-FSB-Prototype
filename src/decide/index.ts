@@ -7,7 +7,8 @@ import type {
 } from '../domain/types';
 import { chipReason, rankLink, type Reason } from '../rank';
 import {
-  r02TouchLimit, r04Muted, r07Disputed, r08PromiseWait, r17PartPaymentAllowed, r18Expired, type RuleHit,
+  r01QuietHours, r02TouchLimit, r03MinGap, r04Muted, r07Disputed, r08PromiseWait, r17PartPaymentAllowed, r18Expired,
+  type RuleHit,
 } from '../rules';
 
 export interface DecideInput {
@@ -94,8 +95,12 @@ export function decide(input: DecideInput): DecisionView | null {
   const limit = r02TouchLimit(link, settings);
   if (limit) return make('HAND_TO_ME', [limit]);
 
-  const chase = (templateKind: TemplateKind, tone: Tone = settings.tone, rules: RuleHit[] = []) =>
-    make('CHASE_NOW', rules, { templateKind, tone });
+  // Soft checks on any chase: quiet hours (R01) and the gap since this customer was last messaged (R03).
+  const soft = [r01QuietHours(now, settings), r03MinGap(customerLinks, customer.name, now, settings)].filter(
+    (h): h is RuleHit => h !== null,
+  );
+  const chase = (templateKind: TemplateKind, tone: Tone = settings.tone) =>
+    make('CHASE_NOW', soft, { templateKind, tone });
   // 7. Promise passed and at least one touch.
   if (link.promisedDate && link.touchCount >= 1) return chase('post_promise');
   // 8. Part payment allowed (R17).
