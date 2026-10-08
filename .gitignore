@@ -28,3 +28,8 @@ scripts/fetch-play-reviews.py
 scripts/filter-reviews.py
 scripts/job-score.mjs
 scripts/render-wireframes.mjs
+docs/numbers.md
+docs/numbers-audit.md
+docs/demo-script.md
+docs/bugs.md
+docs/ai-build-log.template.md
