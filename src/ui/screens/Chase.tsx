@@ -6,7 +6,7 @@ import type { Channel, Lang, LinkStatus, PaymentLink, TemplateKind, Tone } from 
 import { formatINR } from '../../format';
 import { logEvent } from '../../instrumentation';
 import { LENGTH_LIMITS, messageLength, r05Chaseable, r06StatusAtSend, validateMessage, type RuleHit } from '../../rules';
-import { LANG_LABELS, renderMessage } from '../../templates';
+import { LANG_LABELS, TONE_LABELS, renderMessage } from '../../templates';
 import { DEFAULT_NEXT_CHECK_DAYS } from '../../store';
 import { go, useApp } from '../App';
 import { Header, Segmented } from '../components/Chrome';
@@ -39,6 +39,7 @@ export function Chase({ id }: { id: string }) {
     link && customer
       ? renderMessage(kind, t, l, {
           name: customer.name, amountPaise: amountDuePaise(link), description: link.description, url: link.shortUrl,
+          owner: state.owner.name, business: state.owner.business,
         })
       : '';
   const [text, setText] = useState(() => render(tone, lang));
@@ -171,7 +172,7 @@ export function Chase({ id }: { id: string }) {
           </section>
 
           <section className="card stack" aria-label="Message">
-            <Segmented<Tone> label="Tone" value={tone} onChange={changeTone} options={[{ value: 'polite', label: 'Polite' }, { value: 'firm', label: 'Firm' }]} />
+            <Segmented<Tone> label="Tone" value={tone} onChange={changeTone} options={[{ value: 'polite', label: TONE_LABELS.polite }, { value: 'firm', label: TONE_LABELS.firm }]} />
             <Segmented<Lang>
               label="Language"
               value={lang}

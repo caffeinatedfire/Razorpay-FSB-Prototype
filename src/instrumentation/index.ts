@@ -53,7 +53,7 @@ function writeEvents(events: LoggedEvent[]): void {
 export const RUN_KEY = 'collect.run';
 const RUN_MAX_AGE_MS = 30 * 60 * 1000;
 
-interface ActiveRun { runId: string; label: string; startMs: number; startedAt: string; taps: number }
+interface ActiveRun { runId: string; label: string; startMs: number; startedAt: string; taps: number; targets?: string[] }
 
 function readRun(): ActiveRun | null {
   try {
@@ -81,13 +81,53 @@ function writeRun(r: ActiveRun | null): void {
 
 let currentRun: ActiveRun | null = readRun();
 
-function onPointer(e: Event): void {
-  if (!currentRun || (e as PointerEvent).isPrimary === false) return;
+// A tap is a press and release within TAP_SLOP_PX of each other (D-28). A press that moves further,
+// or is cancelled because the browser took it as a scroll, is not a tap.
+export const TAP_SLOP_PX = 10;
+const downs = new Map<number, { x: number; y: number; target: EventTarget | null }>();
+
+/** A short, non-personal description of what was tapped: the control's label or text. */
+export function describeTarget(target: EventTarget | null): string {
+  const el = target instanceof Element ? target.closest('button, a, input, textarea, select, label, [role="button"]') : null;
+  if (!el) return 'screen';
+  const label = el.getAttribute('aria-label') ?? (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? `${el.tagName.toLowerCase()}#${el.id || el.type}` : el.textContent);
+  return (label ?? '').replace(/\s+/g, ' ').trim().slice(0, 40) || el.tagName.toLowerCase();
+}
+
+/** Whether a press at (x0, y0) released at (x1, y1) counts as a tap. */
+export function isTap(x0: number, y0: number, x1: number, y1: number): boolean {
+  return Math.hypot(x1 - x0, y1 - y0) <= TAP_SLOP_PX;
+}
+
+function onDown(e: Event): void {
+  const p = e as PointerEvent;
+  if (!currentRun || p.isPrimary === false) return;
+  downs.set(p.pointerId, { x: p.clientX, y: p.clientY, target: p.target });
+}
+
+function onUp(e: Event): void {
+  const p = e as PointerEvent;
+  const d = downs.get(p.pointerId);
+  downs.delete(p.pointerId);
+  if (!currentRun || !d || !isTap(d.x, d.y, p.clientX, p.clientY)) return;
   currentRun.taps += 1;
+  currentRun.targets = [...(currentRun.targets ?? []), describeTarget(d.target)];
   writeRun(currentRun);
 }
 
-if (currentRun && typeof document !== 'undefined') document.addEventListener('pointerdown', onPointer, true);
+function onCancel(e: Event): void {
+  downs.delete((e as PointerEvent).pointerId);
+}
+
+function listen(on: boolean): void {
+  if (typeof document === 'undefined') return;
+  const fn = on ? document.addEventListener.bind(document) : document.removeEventListener.bind(document);
+  fn('pointerdown', onDown, true);
+  fn('pointerup', onUp, true);
+  fn('pointercancel', onCancel, true);
+}
+
+if (currentRun) listen(true);
 
 export function logEvent(name: EventName, clock: Clock, data?: LoggedEvent['data']): void {
   const ev: LoggedEvent = { name, at: toIstIso(clock.now()), t: Math.round(monotonicMs()) };
@@ -102,13 +142,14 @@ export function isRunActive(): boolean {
 
 /** Starts a timed run. The Start tap itself is not counted: counting starts after it. */
 export function startRun(label: string, clock: Clock): string {
-  document.removeEventListener('pointerdown', onPointer, true);
+  listen(false);
+  downs.clear();
   const startMs = systemMs();
   const startedAt = toIstIso(new Date(startMs));
   const runId = `run_${startedAt.replace(/[^0-9]/g, '').slice(0, 14)}_${Math.round(monotonicMs())}`;
   currentRun = { runId, label: label.trim() || 'unnamed', startMs, startedAt, taps: 0 };
   writeRun(currentRun);
-  document.addEventListener('pointerdown', onPointer, true);
+  listen(true);
   logEvent('timed_start', clock, { label: currentRun.label });
   return runId;
 }
@@ -122,8 +163,11 @@ export function endRun(clock: Clock): RunResult | null {
   const result: RunResult = {
     runId: r.runId, label: r.label, ms: Math.max(0, systemMs() - r.startMs), taps: r.taps, startedAt: r.startedAt,
   };
-  logEvent('timed_end', clock, { label: r.label, ms: result.ms, taps: result.taps, started_at: r.startedAt });
-  document.removeEventListener('pointerdown', onPointer, true);
+  logEvent('timed_end', clock, {
+    label: r.label, ms: result.ms, taps: result.taps, started_at: r.startedAt, targets: (r.targets ?? []).join(' | '),
+  });
+  listen(false);
+  downs.clear();
   currentRun = null;
   writeRun(null);
   return result;
@@ -142,12 +186,26 @@ export function timingsCsv(events: LoggedEvent[] = readEvents()): string {
   return ['run_id,label,ms,taps,started_at', ...rows.map((r) => r.map(csvCell).join(','))].join('\n') + '\n';
 }
 
+/** events.csv: every logged event, for explaining a run (D-28). */
+export function eventsCsv(events: LoggedEvent[] = readEvents()): string {
+  const rows = events.map((e) => [e.runId ?? '', e.name, e.at, e.t, e.data ? JSON.stringify(e.data) : '']);
+  return ['run_id,name,at,t,data', ...rows.map((r) => r.map(csvCell).join(','))].join('\n') + '\n';
+}
+
 export function downloadTimings(): void {
-  const blob = new Blob([timingsCsv()], { type: 'text/csv' });
+  download('timings.csv', timingsCsv());
+}
+
+export function downloadEvents(): void {
+  download('events.csv', eventsCsv());
+}
+
+function download(name: string, text: string): void {
+  const blob = new Blob([text], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'timings.csv';
+  a.download = name;
   document.body.appendChild(a);
   a.click();
   a.remove();

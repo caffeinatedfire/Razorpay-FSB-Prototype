@@ -21,8 +21,20 @@ export interface AppState {
   settings: OwnerSettings;
   /** linkId -> when the owner wants to look at it again (set on the Sent screen) */
   nextCheckAt: Record<string, string>;
+  /** The sender named in the sign-off (D-26). Kept beside the settings so Appendix C types stay as written. */
+  owner: OwnerProfile;
   seq: number;
 }
+
+export interface OwnerProfile {
+  name: string;
+  business: string;
+}
+
+/** Synthetic demo owner, invented like the fixtures. */
+export const DEFAULT_OWNER: OwnerProfile = { name: 'Asha', business: 'Brightline Studio' };
+export const OWNER_NAME_MAX = 30;
+export const BUSINESS_NAME_MAX = 40;
 
 export const DEFAULT_SETTINGS: OwnerSettings = {
   quietStart: '09:00',
@@ -75,6 +87,7 @@ export function initialState(): AppState {
     activity: seedActivity(f),
     settings: { ...DEFAULT_SETTINGS },
     nextCheckAt: {},
+    owner: { ...DEFAULT_OWNER },
     seq: 0,
   };
 }
@@ -83,6 +96,7 @@ export type Action =
   | { type: 'SEND_CONFIRMED'; linkId: string; text: string; channel: Touch['channel']; lang: Touch['lang']; tone: Touch['tone']; at: string; nextCheckDays: number }
   | { type: 'SET_NEXT_CHECK'; linkId: string; at: string }
   | { type: 'SET_SETTINGS'; patch: Partial<OwnerSettings> }
+  | { type: 'SET_OWNER'; patch: Partial<OwnerProfile> }
   | { type: 'RESET' };
 
 export const DEFAULT_NEXT_CHECK_DAYS = 2;
@@ -129,9 +143,16 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, nextCheckAt: { ...state.nextCheckAt, [action.linkId]: action.at } };
     case 'SET_SETTINGS':
       return { ...state, settings: { ...state.settings, ...action.patch } };
+    case 'SET_OWNER': {
+      const owner = { ...state.owner, ...action.patch };
+      return {
+        ...state,
+        owner: { name: owner.name.slice(0, OWNER_NAME_MAX), business: owner.business.slice(0, BUSINESS_NAME_MAX) },
+      };
+    }
     case 'RESET':
-      // Data goes back to the fixtures; the owner's settings (including Timed run) stay.
-      return { ...initialState(), settings: state.settings };
+      // Data goes back to the fixtures; the owner's settings (including Timed run) and names stay.
+      return { ...initialState(), settings: state.settings, owner: state.owner };
     default:
       return state;
   }
@@ -154,7 +175,11 @@ export function loadState(): AppState {
     if (raw) {
       const parsed = JSON.parse(raw) as AppState;
       if (parsed && parsed.version === 1 && Array.isArray(parsed.links)) {
-        return { ...parsed, settings: { ...DEFAULT_SETTINGS, ...parsed.settings } };
+        return {
+          ...parsed,
+          settings: { ...DEFAULT_SETTINGS, ...parsed.settings },
+          owner: { ...DEFAULT_OWNER, ...parsed.owner },
+        };
       }
     }
   } catch {

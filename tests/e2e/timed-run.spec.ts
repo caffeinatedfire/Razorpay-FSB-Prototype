@@ -29,3 +29,23 @@ test('Sent says so when Timed run is on but no run was started', async ({ page }
   await page.getByRole('dialog').getByRole('button', { name: 'Confirm (simulated)' }).click();
   await expect(page.getByTestId('run-missing')).toBeVisible();
 });
+
+test('a scroll during a timed run is not counted as a tap (D-28)', async ({ page }) => {
+  await page.goto('/?demo=1&timed=1');
+  await page.getByLabel(/Label for this run/).fill('scroll-check');
+  await page.getByRole('button', { name: 'Start' }).click();
+  // A press that moves 80 px before release is a scroll, not a tap.
+  await page.mouse.move(200, 600);
+  await page.mouse.down();
+  await page.mouse.move(200, 520, { steps: 5 });
+  await page.mouse.up();
+  await page.getByTestId('chase-card').first().getByRole('button', { name: /^Chase / }).click();
+  await page.getByRole('button', { name: 'Send on WhatsApp' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Confirm (simulated)' }).click();
+  await expect(page.getByTestId('run-readout')).toContainText('3 taps');
+  const end = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('collect.events') ?? '[]').find((e: { name: string }) => e.name === 'timed_end'),
+  );
+  expect(end.data.targets.split(' | ')).toHaveLength(3);
+  expect(end.data.targets).toContain('Send on WhatsApp');
+});

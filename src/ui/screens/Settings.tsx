@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { downloadTimings } from '../../instrumentation';
+import { downloadEvents, downloadTimings } from '../../instrumentation';
 import { useApp } from '../App';
 import { BottomNav, Header } from '../components/Chrome';
 
@@ -64,9 +64,14 @@ export function Settings() {
             Quiet hours, reminder limits, tone, language and the SIMULATED demo controls arrive in the next build.
           </p>
           {params.debug ? (
-            <button type="button" className="btn ghost" onClick={downloadTimings}>
-              Export timings.csv (debug)
-            </button>
+            <div className="row">
+              <button type="button" className="btn ghost grow" onClick={downloadTimings}>
+                Export timings.csv
+              </button>
+              <button type="button" className="btn ghost grow" onClick={downloadEvents}>
+                Export events.csv
+              </button>
+            </div>
           ) : null}
         </main>
       </div>

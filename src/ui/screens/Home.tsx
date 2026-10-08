@@ -3,7 +3,7 @@ import { formatDayShort, parseIso } from '../../clock';
 import { buildHome, type DecisionView } from '../../decide';
 import { amountDuePaise, daysOverdue, recoveredThisWeek } from '../../domain/derive';
 import { formatINR } from '../../format';
-import { downloadTimings, isRunActive, logEvent, startRun } from '../../instrumentation';
+import { downloadEvents, downloadTimings, isRunActive, logEvent, startRun } from '../../instrumentation';
 import { go, useApp } from '../App';
 import { BottomNav, Header } from '../components/Chrome';
 
@@ -133,9 +133,14 @@ export function Home() {
 
           <p className="footer-line">Paid this week: {formatINR(paid.viaLinkPaise + paid.offlinePaise)}</p>
           {params.debug ? (
-            <button type="button" className="btn ghost" onClick={downloadTimings}>
-              Export timings.csv (debug)
-            </button>
+            <div className="row">
+              <button type="button" className="btn ghost grow" onClick={downloadTimings}>
+                Export timings.csv
+              </button>
+              <button type="button" className="btn ghost grow" onClick={downloadEvents}>
+                Export events.csv
+              </button>
+            </div>
           ) : null}
         </main>
       </div>
