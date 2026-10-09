@@ -26,8 +26,8 @@ Actual times are read from git commit times, not estimated. "Planned" is the pla
 | P3 Happy-path build | 6 h | about 0.3 h (14:18 to 14:38, 6 Oct), then two fixes from phone testing (01:58 and 02:32, 7 Oct) | G3: approved with changes |
 | P4 Edge states and rules | 5 h | about 0.25 h (15:57 to 16:11, 8 Oct), then G4 changes to 16:57 | G4: approved with changes |
 | P5 Razorpay test-mode bridge | 3 h | cut at G3 (D-29) | none |
-| P6 Demo, note and logs | 5 h | about 0.3 h (16:57 to 17:15, 8 Oct, last content commit); feature freeze `freeze-1` tagged at 16:11, 9 Oct, after a bug-fix morning with no bugs reported | G5 pending |
-| P7 Package and submit | 2 h | not started | G6 pending |
+| P6 Demo, note and logs | 5 h | about 0.3 h (16:57 to 17:15, 8 Oct, last content commit); feature freeze `freeze-1` tagged at 16:11, 9 Oct, after a bug-fix morning with no bugs reported | G5: approved |
+| P7 Package and submit | 2 h | started 16:16, 9 Oct | G6 pending |
 
 Also done at my request between gates, on 7 Oct: the check of my Vercel deploy (17:24), moving working files out of git (17:35 to 17:53), and the restyle to the merchant app's colours (committed 23:15).
 
@@ -65,6 +65,8 @@ Every "AI was wrong about" line from the build log, in order. Where a fix follow
 - **2026-10-08T16:12+05:30 · correction · "Minutes" in recent entries were invented.** I wrote minute counts from a sense of effort instead of reading the clock, after promising in the 14:22 entry on 6 Oct to read times from the clock. From now on, Minutes = end time minus start time, both from `date`, and the start time is written down.
 - **2026-10-08T16:55+05:30 · G4 changes · 5-second demo payment, timings kept apart, remount bug.** (1) my new assertion first failed because the dev server's StrictMode logs effects twice at the same timestamp, which I had mistaken for the remount; the live (production) run showed the real remount after the send. (2) My first write of the G4 reply into the decision log turned "\r" and "\t" in the Windows paths into control characters; rewritten from a file so it is word for word.
 - **2026-10-08T17:14+05:30 · P6-T02 to P6-T08 · numbers, demo video, note, audit, AI build log, README.** (1) the first recording was 96.3 s although the script timeline said 91.7 s: the video starts when the page opens and keeps running while the browser closes; it now trims the lead-in with Playwright's ffmpeg and reads the file's duration. (2) my duration probe used ffmpeg's null output, which this ffmpeg build lacks. (3) the caption bar first covered "Confirm (simulated)" and "Send anyway". (4) the storyboard's E-001 snippet ran on with "but everyone uses WhatsApp", which is not in the coded quote; the video shows only the verified words. (5) my draft caption "37 public reviews coded" would have hidden that 73 reviews were coded and 37 are about this job. (6) my first voice-over said "I coded thirty-seven reviews"; the AI coded them. (7) my first note said "only 14% chase purely by hand" and named a model for sessions I cannot verify; both reworded. (8) a new decisions.md row said "Testers read 'Polite' as formality", which no note says; replaced with the note's own words.
+- **2026-10-09T16:13+05:30 · P6-T01, P6-T09 · freeze, checks, gate G5.** (1) I first wrote the last P6 content commit as 17:27; git says 17:15. (2) I wrote the freeze time into the AI log before tagging and it came out a minute early (BUG-001).
+- **2026-10-09T16:16+05:30 · correction · G5.md "Written" time.** I typed the gate pack's time instead of reading the clock, the same slip as G2's "14:35". Gate packs now take their time from `date`.
 
 ## 5. Decisions I made
 
@@ -93,7 +95,9 @@ My gate replies, copied word for word from the decision log.
 
 > GATE G4 | 2026-10-08T16:57+05:30 | answers to the agent's follow-up questions, verbatim: Demo sender: "Use "Samik, CFI"". New runs: "Me, after seeing the app". G4: "Approved with changes".
 
-Other decisions recorded as mine in the decision log: D-01, D-02, D-16, D-18, D-19, D-24, D-25, D-26, D-27, D-28, D-29, D-30, D-31, D-33, D-34, D-36, D-37.
+> GATE G5 | 2026-10-09T16:16+05:30 | approved; all three testers were new to the app
+
+Other decisions recorded as mine in the decision log: D-01, D-02, D-16, D-18, D-19, D-24, D-25, D-26, D-27, D-28, D-29, D-30, D-31, D-33, D-34, D-36, D-37, D-38.
 
 ## 6. What I would not trust AI with here
 
