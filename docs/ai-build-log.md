@@ -2,19 +2,34 @@
 
 Facts only, compiled from `docs/build-log.md`, `docs/decision-log.md` and the git history. Times are IST. Sections 4 and 5 are copied from the logs by `node scripts/ai-build-log.mjs`, word for word.
 
-## 1. How AI was used
+## 1. Tools and models
+
+- **Claude Code** (Anthropic), the coding agent, in the desktop app. From the G2 reply (6 Oct, 14:18) onward the sessions ran **Claude Opus 5.5** (model ID `claude-opus-5-5`). The model behind the first session (P0 to P2, 6 Oct, 13:15 to 14:14) is not recorded in these logs.
+- **A planner chat** wrote `IMPLEMENTATION_PLAN.md` before the repo existed. Its model is not recorded here.
+- **No AI at runtime.** Collect itself calls no model: messages come from fixed templates and every decision from tested rules (D-04, D-09).
+- Other tools, not AI: React, Vite, TypeScript, Vitest, Playwright with axe-core for accessibility, and Vercel for hosting.
+
+## 2. How AI was used, and what I decided
 
 | Area | Tool | What the AI did | How it sped up or improved the work | Where I made the key decisions |
 | --- | --- | --- | --- | --- |
 | The plan | An AI planner chat, before this repo existed | Wrote `IMPLEMENTATION_PLAN.md`: phases, six human gates, rules R01 to R18, templates, evidence scheme | Every later step had an acceptance check and a stop rule written down before any code | I chose Track 1 and the Collect job (D-01, D-02) and set the gate times |
-| Research and evidence | Claude Code | Read Razorpay's public docs; downloaded 15,738 public Play reviews through the store page's own data endpoint (D-13); coded 89 items; scored three jobs | One pass over thousands of reviews instead of reading them by hand; every row has a URL, a date and a quote of 20 words or fewer | I spot-checked 5 rows of my choosing at G1 and locked Collect only provisionally (D-16) |
+| Research and evidence | Claude Code | Read Razorpay's public docs; downloaded 15,738 public Play reviews through the store page's own data endpoint (D-13); coded 89 items; scored three jobs | One pass over thousands of reviews instead of reading them by hand; every row has a URL, a date and a quote of 20 words or fewer | At G1 I locked Collect only provisionally, so the note states the lock rests on 37 reviews (D-16) |
 | Design | Claude Code | Journey map, 7 wireframes, 12 product decisions, metrics, a 90-second storyboard | A full paper design to judge before any code | I kept Hindi and Hinglish and kept D-01 (G2) |
 | Code | Claude Code | The React app, 18 rules as pure functions, the store, instrumentation, the demo recorder | Six screens, three languages and every rule tested inside two days | My G3 changes (sender sign-off, Gentle and Firm, a tap counter that ignores scrolls), the visual style (D-25), the sender name (D-36) |
 | Tests and safety | Claude Code | Unit and rule tests titled by rule ID, end-to-end flows with accessibility checks, a guard against live keys, real-looking phone numbers and stray clocks | Bugs were caught by tests before I saw them, and the guard ran on every commit | I ran timed tests on my own phone and with people who had not seen the app |
 | Fixtures | Claude Code | A seeded generator: 30 links, 14 invented customers, the same bytes on every run | A repeatable demo state | None needed |
-| Note, video, logs | Claude Code | Drafted this log, the one-page note, the demo script and captions; recorded the video with a script | A draft in minutes, with every number traced to a file and line | I write the lines marked [YOU] in the note, and approve the content at G5 |
+| Note, video, logs | Claude Code | Drafted this log, the one-page note, the demo script and captions; recorded the video with a script | A draft in minutes, with every number traced to a file and line | I wrote the line on why I chose this job, and approved the content at G5 |
 
-## 2. Timeline
+## 3. Agent setup and workflow
+
+- **One plan, followed in order.** `IMPLEMENTATION_PLAN.md` set eight phases (P0 to P7), each with tasks, acceptance checks run as commands, and a cut list. `CLAUDE.md` repeated the rules that matter most and was loaded at the start of every session.
+- **Six human gates.** At each gate the agent stopped, wrote a pack (`docs/gates/G1.md` to `G6.md`) and waited. My replies were copied word for word into the decision log; silence was never taken as approval.
+- **Two logs.** A build log entry for every task, each with an honest "AI was wrong about" line, and a decision log of every choice with the alternative rejected and who decided.
+- **Guard rails in code.** A guard script, run on every check, fails on a live Razorpay key, a real-looking phone number, a clock read outside one module, or WhatsApp hand-off code outside its dev-only module. A rule-coverage script fails unless all 18 rules have a test titled with their ID.
+- **Stop-and-ask triggers**: an ambiguous plan, a new dependency, a real person or live key, three failed attempts, or a phase over 125% of its hours.
+
+## 4. Timeline
 
 Actual times are read from git commit times, not estimated. "Planned" is the plan's agent-hour estimate.
 
@@ -33,7 +48,7 @@ Also done at my request between gates, on 7 Oct: the check of my Vercel deploy (
 
 The "Minutes" lines in the build log before 8 Oct, 16:13 were estimates, not measurements; a correction entry says so. The commit times above are the reliable record.
 
-## 3. Prompts that mattered
+## 5. Prompts that mattered
 
 1. The start prompt, as written in section 0 of the plan: "Read IMPLEMENTATION_PLAN.md completely. Work autonomously through the phases in order, starting at the first phase whose Status is not done or cut. Stop at every gate in section 5 and at every stop-and-ask trigger in section 2. Do not start the next phase until I reply to a gate." The session that ran P0 is not in these logs, so whether it was sent word for word is not recorded here.
 2. G1: "approved with changes: lock Collect provisionally". It kept the job but made the note state that the lock rests on 37 reviews.
@@ -41,7 +56,11 @@ The "Minutes" lines in the build log before 8 Oct, 16:13 were estimates, not mea
 4. "Add files such as evidence, logs etc that are not needed for the submission to git ignore and tell me how to delete them from git". It made the public repo hold only the product (D-24).
 5. G3: "approved with changes: A, B1, C; cut P5; I can read Hindi; yes to the space before ।". It turned my testers' notes into changes and cut the Razorpay test-mode bridge (D-26 to D-31).
 
-## 4. Where the AI was wrong
+## 6. One AI output I corrected, and why
+
+**The tap counter.** The AI built Timed run mode to count every pointer press between Start and the Sent screen. On my phone, three people new to the app gave a median of 9 taps against a target of 8, and the export could not say what the extra taps were. The counter was treating the start of every scroll as a tap. At G3 I asked for a change (option C): a tap now counts only when the finger lifts within 10 px of where it went down, and every run records what was tapped (D-28). A test now checks that a scroll is not counted. The 9 stays in the note as measured, because measured data is not rewritten.
+
+## 7. Where the AI was wrong
 
 Every "AI was wrong about" line from the build log, in order. Where a fix followed, the line says what changed.
 
@@ -67,8 +86,9 @@ Every "AI was wrong about" line from the build log, in order. Where a fix follow
 - **2026-10-08T17:14+05:30 · P6-T02 to P6-T08 · numbers, demo video, note, audit, AI build log, README.** (1) the first recording was 96.3 s although the script timeline said 91.7 s: the video starts when the page opens and keeps running while the browser closes; it now trims the lead-in with Playwright's ffmpeg and reads the file's duration. (2) my duration probe used ffmpeg's null output, which this ffmpeg build lacks. (3) the caption bar first covered "Confirm (simulated)" and "Send anyway". (4) the storyboard's E-001 snippet ran on with "but everyone uses WhatsApp", which is not in the coded quote; the video shows only the verified words. (5) my draft caption "37 public reviews coded" would have hidden that 73 reviews were coded and 37 are about this job. (6) my first voice-over said "I coded thirty-seven reviews"; the AI coded them. (7) my first note said "only 14% chase purely by hand" and named a model for sessions I cannot verify; both reworded. (8) a new decisions.md row said "Testers read 'Polite' as formality", which no note says; replaced with the note's own words.
 - **2026-10-09T16:13+05:30 · P6-T01, P6-T09 · freeze, checks, gate G5.** (1) I first wrote the last P6 content commit as 17:27; git says 17:15. (2) I wrote the freeze time into the AI log before tagging and it came out a minute early (BUG-001).
 - **2026-10-09T16:16+05:30 · correction · G5.md "Written" time.** I typed the gate pack's time instead of reading the clock, the same slip as G2's "14:35". Gate packs now take their time from `date`.
+- **2026-10-09T16:21+05:30 · P7-T01 to P7-T06 · deploy notes, fresh clone, history scan, submission pack, checklist, gate G6.** (1) my first sub-path test showed "/Git/collect/" because Git Bash rewrites arguments that look like paths; rerun with MSYS_NO_PATHCONV=1, the app was fine. (2) my packaging script first failed twice: top-level await in a folder without "type": "module", then package resolution from the scratch folder; it now runs from a temporary copy in the repo. (3) I wrote the G5 pack's time as 16:20 before it happened (corrected entry above).
 
-## 5. Decisions I made
+## 8. Decisions I made
 
 My gate replies, copied word for word from the decision log.
 
@@ -96,18 +116,36 @@ My gate replies, copied word for word from the decision log.
 > GATE G4 | 2026-10-08T16:57+05:30 | answers to the agent's follow-up questions, verbatim: Demo sender: "Use "Samik, CFI"". New runs: "Me, after seeing the app". G4: "Approved with changes".
 
 > GATE G5 | 2026-10-09T16:16+05:30 | approved; all three testers were new to the app
+>
+> HUMAN | 2026-10-09T17:04+05:30 | message during G6, items 1 and 2 verbatim (item 3, the form's fields, is copied word for word into docs/form-fields.md):
+> 1. Samik Gandhi - I chose chasing overdue Razorpay Payment Links because it is a frequent job that fits on a phone and that I could evidence from public sources and build end to end in five days, not because it is the most painful problem a merchant has.
+> 2. Before I upload, give voiceover lines for the demo video. I will add them to the video.
 
-Other decisions recorded as mine in the decision log: D-01, D-02, D-16, D-18, D-19, D-24, D-25, D-26, D-27, D-28, D-29, D-30, D-31, D-33, D-34, D-36, D-37, D-38.
+Other decisions recorded as mine in the decision log: D-01, D-02, D-16, D-18, D-19, D-24, D-25, D-26, D-27, D-28, D-29, D-30, D-31, D-33, D-34, D-36, D-37, D-38, D-40, D-42.
 
-## 6. What I would not trust AI with here
+## 9. What I would not trust AI with here
 
-Drafted from what went wrong above; I confirm or change these at G5.
+Drafted by the agent from what went wrong above, and kept as written at G5 (D-39).
 
 1. **Numbers and times without a source.** The AI wrote minute counts from a sense of effort instead of the clock, and a storyboard quote ran past what the evidence contains. Every figure now has to point to a file and a line.
 2. **Anything sent to a real person.** Collect never sends: the send step is simulated, and the only real hand-off is to my own number in a development build.
-3. **Calling the evidence validation.** The reviews were found and coded by the same AI; its re-code agreeing with itself is not an independent check. My five-row spot check and the timed runs on my phone were the human checks.
+3. **Calling the evidence validation.** The reviews were found and coded by the same AI; its re-code agreeing with itself is not an independent check. The human checks were the timed runs on my phone and my reviews at each gate.
 
-## 7. Reproduce it
+## 10. Known limitations, risks and verification
+
+**Limitations.** Collect runs on synthetic data and was not validated with merchants; no merchant was interviewed. It was never tested against Razorpay's API (the test-mode bridge was cut, D-29). The evidence is public app-store reviews and docs, found and coded by the same AI agent. The ranking weights and every metric baseline are placeholders.
+
+**Risks.** The review sample is biased towards owners who already use an app, so manual chasing is under-counted. The messages are signed with my own name, not a merchant's (D-36). Sending is simulated, so delivery and reply rates are unknown.
+
+**How the work was verified.**
+- 92 unit and rule tests, and 13 end-to-end flows at phone size with accessibility checks on all six screens (`npm run check`, `npm run e2e`).
+- 18 of 18 rules covered by a test titled with the rule ID.
+- The safety guard over the working tree, every commit in the history, and the production build.
+- Every number in the note traced to a file and line, with 0 unsourced (`docs/numbers-audit.md`, `scripts/check-numbers.mjs`).
+- A fresh clone in a second folder installs, passes every check and records the demo to its last frame.
+- Human checks: three people new to the app did timed runs on my phone at G3, and what we found changed the product (section 6). Each gate pack listed the checks for me to run; my replies are in section 8.
+
+## 11. Reproduce it
 
 ```
 npm ci
