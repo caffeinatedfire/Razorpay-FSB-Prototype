@@ -1,10 +1,10 @@
 # Collect: chasing overdue payment links in two minutes
 
-Track 1, Razorpay in Your Pocket · [YOU: your name] · Concept prototype, not a Razorpay product
+Track 1, Razorpay in Your Pocket · Samik Gandhi · Concept prototype, not a Razorpay product
 
 ## 1. The job
 
-A one-person catering, coaching or design business (composite, fictional) bills on credit and sends a Razorpay Payment Link after each job. Some links are always overdue. The job: remind the right customers, in my own words, at the right time, without losing them. [YOU: one line on why you chose this job.]
+A one-person catering, coaching or design business (composite, fictional) bills on credit and sends a Razorpay Payment Link after each job. Some links are always overdue. The job: remind the right customers, in my own words, at the right time, without losing them. I chose chasing overdue Razorpay Payment Links because it is a frequent job that fits on a phone and that I could evidence from public sources and build end to end in five days, not because it is the most painful problem a merchant has.
 
 ## 2. How it is done today, and where it hurts
 
@@ -25,7 +25,7 @@ The owner works between jobs, away from a desk, and the customer lives on WhatsA
 
 Practice runs, not merchants: 3 first-use runs by non-merchants took a median 27.5 s from Start to Sent, and 9 taps by a counter that also counted scrolls (target 8). The designed path is 3 taps.
 
-## 5. Decisions and what I left out
+## 5. Product and AI decisions, and what I left out
 
 - **The owner taps send**, not scheduled sending: one wrong message can cost a customer.
 - **Fixed, editable templates with hard checks**, not AI-written text: no wrong amount, and every rule is tested.
@@ -43,4 +43,4 @@ Built: 6 screens, 18 rules each with a test, 3 languages, running in a phone bro
 
 ---
 
-Prototype: https://rzp-fsb-cf-ptype.vercel.app/ · Video: VIDEO_URL · Built with Claude Code (Anthropic) for evidence coding, code, tests and drafts; React, Vite, TypeScript and Playwright; public Google Play and App Store reviews and Razorpay's public docs; hosted on Vercel.
+Prototype: https://rzp-fsb-cf-ptype.vercel.app/ · AI build log: https://github.com/caffeinatedfire/Razorpay-FSB-Prototype/blob/main/docs/ai-build-log.md · Built with Claude Code (Anthropic) for evidence coding, code, tests and drafts; React, Vite, TypeScript and Playwright; public Google Play and App Store reviews and Razorpay's public docs; hosted on Vercel.
