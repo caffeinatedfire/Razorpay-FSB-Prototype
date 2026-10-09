@@ -26,7 +26,7 @@ Actual times are read from git commit times, not estimated. "Planned" is the pla
 | P3 Happy-path build | 6 h | about 0.3 h (14:18 to 14:38, 6 Oct), then two fixes from phone testing (01:58 and 02:32, 7 Oct) | G3: approved with changes |
 | P4 Edge states and rules | 5 h | about 0.25 h (15:57 to 16:11, 8 Oct), then G4 changes to 16:57 | G4: approved with changes |
 | P5 Razorpay test-mode bridge | 3 h | cut at G3 (D-29) | none |
-| P6 Demo, note and logs | 5 h | started 16:57, 8 Oct | G5 pending |
+| P6 Demo, note and logs | 5 h | about 0.3 h (16:57 to 17:15, 8 Oct, last content commit); feature freeze `freeze-1` tagged at 16:10, 9 Oct, after a bug-fix morning with no bugs reported | G5 pending |
 | P7 Package and submit | 2 h | not started | G6 pending |
 
 Also done at my request between gates, on 7 Oct: the check of my Vercel deploy (17:24), moving working files out of git (17:35 to 17:53), and the restyle to the merchant app's colours (committed 23:15).
